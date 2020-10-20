@@ -13,12 +13,12 @@ class Repository @Inject constructor(
     fun getTides() = performGetOperation(
         databaseQuery = { localDataSource.getTides() },
         networkCall = { remoteDataSource.getTides() },
-        saveCallResult = { localDataSource.insertAll() }
+        saveCallResult = { localDataSource.insertTides(it.extremes) }
     )
 
     fun getStations() = performGetOperation(
         databaseQuery = { localDataSource.getStations() },
         networkCall = { remoteDataSource.getStations() },
-        saveCallResult = { localDataSource.insertAll() }
+        saveCallResult = { localDataSource.insertStations(it.stations) }
     )
 }

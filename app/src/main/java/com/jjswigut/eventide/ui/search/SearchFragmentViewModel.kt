@@ -1,11 +1,13 @@
 package com.jjswigut.eventide.ui.search
 
-import androidx.lifecycle.LiveData
-import androidx.lifecycle.MutableLiveData
-import androidx.lifecycle.Transformations
+import androidx.hilt.lifecycle.ViewModelInject
 import androidx.lifecycle.ViewModel
+import com.jjswigut.eventide.data.repository.Repository
 
-class SearchFragmentViewModel : ViewModel() {
+class SearchFragmentViewModel @ViewModelInject constructor(
+        private val repo: Repository
+) : ViewModel() {
 
-
+        val tideStations = repo.getStations()
 }
+
