@@ -1,6 +1,7 @@
 package com.jjswigut.eventide.ui.search
 
 
+import android.content.ContentValues.TAG
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
@@ -9,6 +10,7 @@ import android.view.ViewGroup
 import android.widget.Toast
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Observer
+import androidx.recyclerview.widget.LinearLayoutManager
 import com.jjswigut.eventide.databinding.FragmentSearchBinding
 import com.jjswigut.eventide.ui.BaseFragment
 import com.jjswigut.eventide.ui.StationAction
@@ -31,12 +33,6 @@ class SearchFragment : BaseFragment() {
         listAdapter = StationListAdapter(::handleAction)
     }
 
-    override fun onResume() {
-        super.onResume()
-        setupObservers()
-    }
-
-
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
@@ -46,6 +42,19 @@ class SearchFragment : BaseFragment() {
         val view = binding.root
 
         return view
+    }
+
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+        setupRecyclerView()
+        Log.d(TAG, "onViewCreated: RecyclerView Set up")
+    }
+
+
+    override fun onResume() {
+        super.onResume()
+        setupObservers()
+        Log.d(TAG, "onResume: Observers set up")
     }
 
     private fun handleAction(action: StationAction) {
@@ -71,6 +80,12 @@ class SearchFragment : BaseFragment() {
             }
         })
     }
+
+    private fun setupRecyclerView() {
+        binding.recyclerView.layoutManager = LinearLayoutManager(requireContext())
+        binding.recyclerView.adapter = listAdapter
+    }
+
 
     override fun onDestroyView() {
         super.onDestroyView()
