@@ -26,7 +26,7 @@ android {
             file("../secure.properties")?.withInputStream { secureProps.load(it) }
         }
         resValue "string", "maps_api_key", (secureProps.getProperty("MAPS_API_KEY") ?: "")
-
+        resValue "string", "tides_api_key", (secureProps.getProperty("TIDES_API_KEY") ?: "")
     }
 
     buildTypes {
