@@ -22,9 +22,18 @@ android {
     }
 
     buildTypes {
+        def secureProps = new Properties()
+        if (file("../secure.properties").exists()) {
+            file("../secure.properties")?.withInputStream { secureProps.load(it) }
+        }
+        debug{
+            resValue "string", "maps_api_key", (secureProps.getProperty("MAPS_API_KEY") ?: "")
+        }
         release {
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+            resValue "string", "maps_api_key", (secureProps.getProperty("MAPS_API_KEY") ?: "")
+            buildConfig
         }
     }
     compileOptions {
