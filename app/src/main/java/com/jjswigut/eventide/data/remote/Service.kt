@@ -5,11 +5,12 @@ import com.jjswigut.eventide.data.entities.TideList
 import retrofit2.Response
 import retrofit2.http.GET
 import retrofit2.http.Path
+import retrofit2.http.Query
 
 interface Service {
-    @GET("v2?stations&lat=33.768321&lon=-118.195617&stationDistance=50&key={api_key}")
+    @GET("v2?stations&lat=33.768321&lon=-118.195617&stationDistance=50")
     suspend fun getStations(
-        @Path("api_key") tideApikey: String
+        @Query("key") tideApikey: String
     ): Response<StationList>
 
     @GET("v2?heights&extremes&date=2020-10-18&lat=33.768321&lon=-118.195617&days={api_key}")

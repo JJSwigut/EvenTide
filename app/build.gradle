@@ -7,7 +7,7 @@ plugins {
     id 'dagger.hilt.android.plugin'
 }
 
-android {
+android{
     compileSdkVersion 30
     buildToolsVersion "30.0.0"
 
@@ -26,14 +26,15 @@ android {
         if (file("../secure.properties").exists()) {
             file("../secure.properties")?.withInputStream { secureProps.load(it) }
         }
-        debug{
+       debug {
             resValue "string", "maps_api_key", (secureProps.getProperty("MAPS_API_KEY") ?: "")
+            buildConfigField "String", "tideApiKey", (secureProps.getProperty("TIDES_API_KEY") ?: "")
         }
         release {
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
             resValue "string", "maps_api_key", (secureProps.getProperty("MAPS_API_KEY") ?: "")
-            buildConfig
+            buildConfigField "String", "tideApiKey", (secureProps.getProperty("TIDES_API_KEY") ?: "")
         }
     }
     compileOptions {
