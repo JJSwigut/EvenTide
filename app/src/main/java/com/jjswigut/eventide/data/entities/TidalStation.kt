@@ -11,11 +11,10 @@ class TidalStation(
     @ColumnInfo
     var name: String,
     @ColumnInfo
-    var lat: Float,
+    var lat: Double,
     @ColumnInfo
-    var lon: Float
-) {
-}
+    var lon: Double
+)
 
 //"id":"NOAA_SUB:9410686",
 //"name":"Long Beach, Inner Harbor, California",
