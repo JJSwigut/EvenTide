@@ -20,19 +20,23 @@ android {
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
 
+    }
+
+    buildTypes {
         // Read the API key from ./secure.properties into R.string.maps_api_key
         def secureProps = new Properties()
         if (file("../secure.properties").exists()) {
             file("../secure.properties")?.withInputStream { secureProps.load(it) }
         }
-        resValue "string", "maps_api_key", (secureProps.getProperty("MAPS_API_KEY") ?: "")
-        resValue "string", "tides_api_key", (secureProps.getProperty("TIDES_API_KEY") ?: "")
-    }
-
-    buildTypes {
+        debug {
+            resValue "string", "maps_api_key", (secureProps.getProperty("MAPS_API_KEY") ?: "")
+            buildConfigField "String", "tideApiKey", (secureProps.getProperty("TIDES_API_KEY") ?: "")
+        }
         release {
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+            resValue "string", "maps_api_key", (secureProps.getProperty("MAPS_API_KEY") ?: "")
+            buildConfigField "String", "tideApiKey", (secureProps.getProperty("TIDES_API_KEY") ?: "")
         }
     }
     compileOptions {

@@ -19,8 +19,8 @@ class MapsFragment : BaseFragment() {
 
     private val viewModel: MapFragmentViewModel by viewModels()
 
+
     private val callback = OnMapReadyCallback { googleMap ->
-        viewModel.enableMyLocation(googleMap, requireContext())
         val sydney = LatLng(-34.0, 151.0)
         googleMap.addMarker(MarkerOptions().position(sydney).title("Marker in Sydney"))
         googleMap.moveCamera(CameraUpdateFactory.newLatLng(sydney))
