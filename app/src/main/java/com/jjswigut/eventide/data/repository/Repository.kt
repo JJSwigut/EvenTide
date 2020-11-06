@@ -8,6 +8,7 @@ import javax.inject.Inject
 class Repository @Inject constructor(
     private val remoteDataSource: RemoteDataSource,
     private val localDataSource: Dao
+
 ) {
 
     fun getTides() = performGetOperation(
@@ -21,4 +22,5 @@ class Repository @Inject constructor(
         networkCall = { remoteDataSource.getStations() },
         saveCallResult = { localDataSource.insertStations(it.stations) }
     )
+
 }
