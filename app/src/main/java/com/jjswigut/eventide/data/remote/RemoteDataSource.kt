@@ -9,6 +9,8 @@ class RemoteDataSource @Inject constructor(
 
     private val apiKey = BuildConfig.tideApiKey
 
-    suspend fun getStations() = getResult { service.getStations(apiKey) }
+    suspend fun getStations(lat: Double, lon: Double) =
+        getResult { service.getStations(lat, lon, apiKey) }
+
     suspend fun getTides() = getResult { service.getTides(apiKey) }
 }

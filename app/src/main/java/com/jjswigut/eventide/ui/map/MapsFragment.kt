@@ -12,6 +12,7 @@ import android.view.ViewGroup
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.activityViewModels
+import androidx.lifecycle.observe
 import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.GoogleMap
 import com.google.android.gms.maps.OnMapReadyCallback
@@ -55,9 +56,9 @@ class MapsFragment : BaseFragment() {
 
     override fun onResume() {
         super.onResume()
-        viewModel.userLocation.observe(this, { location ->
-            location?.let { updateMap() }
-        })
+        viewModel.userLocation.observe(this) {
+            updateMap()
+        }
         Log.d(TAG, "onResume: update map ${viewModel.userLocation.value}")
     }
 

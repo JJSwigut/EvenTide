@@ -36,7 +36,7 @@ object AppModule {
 
     @Singleton
     @Provides
-    fun provideCharacterRemoteDataSource(service: Service) = RemoteDataSource(service)
+    fun provideRemoteDataSource(service: Service) = RemoteDataSource(service)
 
     @Singleton
     @Provides

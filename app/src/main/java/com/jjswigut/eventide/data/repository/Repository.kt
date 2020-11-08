@@ -11,16 +11,19 @@ class Repository @Inject constructor(
 
 ) {
 
+
     fun getTides() = performGetOperation(
         databaseQuery = { localDataSource.getTides() },
         networkCall = { remoteDataSource.getTides() },
         saveCallResult = { localDataSource.insertTides(it.extremes) }
     )
 
-    fun getStations() = performGetOperation(
+    fun getStations(lat: Double, lon: Double) = performGetOperation(
         databaseQuery = { localDataSource.getStations() },
-        networkCall = { remoteDataSource.getStations() },
+        networkCall = { remoteDataSource.getStations(lat, lon) },
         saveCallResult = { localDataSource.insertStations(it.stations) }
     )
+
+
 
 }

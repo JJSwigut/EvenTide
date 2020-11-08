@@ -6,7 +6,6 @@ import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
 import com.jjswigut.eventide.data.entities.TidalStation
-
 import com.jjswigut.eventide.data.entities.Tide
 
 @Dao
