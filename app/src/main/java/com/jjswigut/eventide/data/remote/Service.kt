@@ -17,8 +17,8 @@ interface Service {
         @Query("key") tideApiKey: String
     ): Response<StationList>
 
-    @GET("v2?heights&extremes&date=2020-10-18&lat=33.768321&lon=-118.195617&days=7&key={api_key}")
+    @GET("datagetter?date=today&station=9414525&product=high_low&units=english&time_zone=lst&application=Tides_and_Currents&format=json")
     suspend fun getTides(
-        @Query("api_key") tideApiKey: String
+        @Query("station") stationId: String
     ): Response<TideList>
 }
