@@ -61,7 +61,6 @@ class SearchFragment : BaseFragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-
         setupRecyclerView()
         Log.d(TAG, "onViewCreated: RecyclerView Set up")
     }
@@ -132,7 +131,7 @@ class SearchFragment : BaseFragment() {
         }
         fusedLocationClient.lastLocation.addOnSuccessListener { location: Location? ->
             if (location != null) {
-                viewModel.userLocation.value = location
+               viewModel.userLocation.value = location
 
                 Log.d(TAG, "getLastLocation: got location")
             }

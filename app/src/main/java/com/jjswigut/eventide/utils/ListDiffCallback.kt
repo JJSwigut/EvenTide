@@ -2,12 +2,11 @@ package com.jjswigut.eventide.utils
 
 import androidx.annotation.Nullable
 import androidx.recyclerview.widget.DiffUtil
-import com.jjswigut.eventide.data.entities.TidalStation
 
 
 class ListDiffCallback(
-    private val oldList: List<TidalStation>,
-    private val newList: List<TidalStation>
+    private val oldList: List<Any>,
+    private val newList: List<Any>
 ) : DiffUtil.Callback() {
 
     override fun getOldListSize(): Int = oldList.size
@@ -15,11 +14,11 @@ class ListDiffCallback(
     override fun getNewListSize(): Int = newList.size
 
     override fun areItemsTheSame(oldItemPosition: Int, newItemPosition: Int): Boolean {
-        return oldList[oldItemPosition].name == newList[newItemPosition].name
+        return oldList[oldItemPosition] == newList[newItemPosition]
     }
 
     override fun areContentsTheSame(oldPosition: Int, newPosition: Int): Boolean {
-        return oldList[oldPosition].name == newList[newPosition].name
+        return oldList[oldPosition] == newList[newPosition]
     }
 
     @Nullable
