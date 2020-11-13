@@ -1,13 +1,12 @@
 package com.jjswigut.eventide.ui.tides
 
 import android.view.LayoutInflater
-import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
-import com.jjswigut.eventide.R
 import com.jjswigut.eventide.data.entities.Extreme
+import com.jjswigut.eventide.databinding.DayHeaderBinding
 import com.jjswigut.eventide.databinding.ItemTideBinding
 import com.jjswigut.eventide.utils.ListDiffCallback
 
@@ -18,7 +17,7 @@ private val ITEM_VIEW_TYPE_ITEM = 1
 class TidesListAdapter : RecyclerView.Adapter<TidesListAdapter.ViewHolder>() {
 
 
-    private val elements: ArrayList<Extreme> = arrayListOf()
+    private val elements: ArrayList<DataItem> = arrayListOf()
 
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): TidesListAdapter.ViewHolder {
@@ -32,6 +31,11 @@ class TidesListAdapter : RecyclerView.Adapter<TidesListAdapter.ViewHolder>() {
         )
     }
 
+    override fun getItemViewType(position: Int) = when (elements[position]) {
+        is DataItem.TideItem -> ITEM_VIEW_TYPE_ITEM
+        is DataItem.Day -> ITEM_VIEW_TYPE_HEADER
+    }
+
     override fun onBindViewHolder(holder: TidesListAdapter.ViewHolder, position: Int) {
         val item = (elements[position])
         holder.bind(item)
@@ -39,7 +43,7 @@ class TidesListAdapter : RecyclerView.Adapter<TidesListAdapter.ViewHolder>() {
 
     override fun getItemCount(): Int = elements.size
 
-    fun updateData(newData: List<Extreme>) {
+    fun updateData(newData: List<DataItem>) {
         val diffResult = DiffUtil.calculateDiff(
             ListDiffCallback(newList = newData, oldList = elements)
         )
@@ -49,31 +53,37 @@ class TidesListAdapter : RecyclerView.Adapter<TidesListAdapter.ViewHolder>() {
     }
 
 
-    class DayViewHolder(view: View) : RecyclerView.ViewHolder(view) {
+    class DayViewHolder(private val binding: DayHeaderBinding) :
+        RecyclerView.ViewHolder(binding.root) {
+
+        fun bind(day: String) {
+            binding.dayHeader.text = day
+        }
+
         companion object {
             fun from(parent: ViewGroup): DayViewHolder {
                 val layoutInflater = LayoutInflater.from(parent.context)
-                val view = layoutInflater.inflate(R.layout.day_header, parent, false)
-                return DayViewHolder(view)
+                val binding = DayHeaderBinding.inflate(layoutInflater, parent, false)
+                return DayViewHolder(binding)
             }
         }
     }
 
     inner class ViewHolder(
         private val binding: ItemTideBinding,
-        private val elements: List<Extreme>
+        private val elements: List<DataItem>
     ) : RecyclerView.ViewHolder(binding.root) {
 
         private val highLowView: TextView = binding.tideHighLow
         private val timeView: TextView = binding.tideTime
         private val heightView: TextView = binding.tideHeight
-        private fun element() = elements[adapterPosition]
+        private fun element(): DataItem = elements[adapterPosition]
 
 
-        fun bind(item: Extreme) {
-            highLowView.text = element().type
-            timeView.text = element().dt.toString()
-            heightView.text = element().height.toString()
+        fun bind(item: DataItem) {
+            highLowView.text = element().tide.type
+            timeView.text = element().tide.dt.toString()
+            heightView.text = element().tide.height.toString()
         }
     }
 
