@@ -7,7 +7,7 @@ import androidx.room.RoomDatabase
 import com.jjswigut.eventide.data.entities.Extreme
 import com.jjswigut.eventide.data.entities.TidalStation
 
-@Database(entities = [Extreme::class, TidalStation::class], version = 2, exportSchema = false)
+@Database(entities = [Extreme::class, TidalStation::class], version = 3, exportSchema = false)
 abstract class AppDatabase : RoomDatabase() {
 
     abstract fun dao(): Dao

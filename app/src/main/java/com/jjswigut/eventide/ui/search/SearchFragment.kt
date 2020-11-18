@@ -131,8 +131,6 @@ class SearchFragment : BaseFragment() {
         }
         fusedLocationClient.lastLocation.addOnSuccessListener { location: Location? ->
             if (location != null) {
-               viewModel.userLocation.value = location
-
                 Log.d(TAG, "getLastLocation: got location")
             }
 

@@ -1,14 +1,17 @@
 package com.jjswigut.eventide.ui.tides
 
 
+import android.content.ContentValues.TAG
 import android.location.Location
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.Observer
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.jjswigut.eventide.data.entities.UIModel
 import com.jjswigut.eventide.databinding.FragmentTidesBinding
 import com.jjswigut.eventide.ui.BaseFragment
 import com.jjswigut.eventide.ui.search.SearchFragmentViewModel
@@ -27,6 +30,7 @@ class TidesFragment : BaseFragment() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         listAdapter = TidesListAdapter()
+
     }
 
 
@@ -58,8 +62,15 @@ class TidesFragment : BaseFragment() {
         viewModel.userLocation.observe(viewLifecycleOwner, Observer {
             if (it != null) getAndObserveTides(it)
         })
-        viewModel.tidesLiveData.observe(viewLifecycleOwner, Observer {
-            if (!it.isNullOrEmpty()) listAdapter.updateData(ArrayList(it))
+        viewModel.tidesLiveData.observe(viewLifecycleOwner, Observer { list ->
+            if (!list.isNullOrEmpty()) {
+                var sordidTides = list.groupBy { it.date.take(10) }
+                var flatTides =
+                    sordidTides.flatMap { date -> mutableListOf<Any>(date.key).also { it.addAll(date.value) } }
+                Log.d(TAG, "setupObservers: $flatTides")
+                listAdapter.submitData(flatTides as ArrayList<UIModel>)
+
+            }
 
         })
     }
@@ -68,14 +79,16 @@ class TidesFragment : BaseFragment() {
     private fun getAndObserveTides(it: Location) {
         viewModel.getTidesWithLocation(viewModel.userLocation.value!!)
             .observe(viewLifecycleOwner, Observer {
-                if (!it.data.isNullOrEmpty())
-                    listAdapter.updateData(ArrayList(it.data))
+                if (!it.data.isNullOrEmpty()) {
+                    viewModel.tidesLiveData.value = it.data
+                    Log.d(TAG, "getAndObserveTides: tides observed")
+                }
             })
     }
 
     private fun setupRecyclerView() {
-        binding.tideRecyclerView.layoutManager = LinearLayoutManager(requireContext())
-        binding.tideRecyclerView.adapter = listAdapter
+        binding.dayRecyclerView.layoutManager = LinearLayoutManager(requireContext())
+        binding.dayRecyclerView.adapter = listAdapter
     }
 
     override fun onDestroyView() {

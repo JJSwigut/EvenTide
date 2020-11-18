@@ -1,79 +1,46 @@
 <?xml version="1.0" encoding="utf-8"?>
-<com.google.android.material.card.MaterialCardView xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/matter_view"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    android:layout_margin="16dp"
-    android:clickable="true"
-    app:cardCornerRadius="4dp"
-    app:cardElevation="10dp"
-    app:cardPreventCornerOverlap="true"
-    app:strokeColor="@color/primaryDarkColor"
-    app:strokeWidth="2dp">
+    android:layout_height="wrap_content">
 
 
-    <androidx.constraintlayout.widget.ConstraintLayout
-        android:layout_width="match_parent"
+    <TextView
+        android:id="@+id/tide_high_low"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:background="@color/primaryLightColor"
-        android:orientation="horizontal">
+        android:layout_marginStart="32dp"
+        android:layout_marginEnd="101dp"
+        android:padding="8dp"
+        android:textAppearance="@style/TextAppearance.MaterialComponents.Subtitle2"
+        app:layout_constraintEnd_toStartOf="@+id/tide_time"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        tools:text="High" />
 
-        <TextView
-            android:id="@+id/tide_date"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="1dp"
-            android:background="@color/secondaryColor"
-            android:padding="8dp"
-            android:textAppearance="@style/TextAppearance.MaterialComponents.Subtitle2"
-            android:textColor="@color/secondaryTextColor"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintVertical_bias="0.0"
-            tools:text="November 10, 2020" />
+    <TextView
+        android:id="@+id/tide_height"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="99dp"
+        android:layout_marginEnd="32dp"
+        android:padding="8dp"
+        android:textAppearance="@style/TextAppearance.MaterialComponents.Subtitle2"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@+id/tide_time"
+        app:layout_constraintTop_toTopOf="parent"
+        tools:text="4.8'" />
 
-        <TextView
-            android:id="@+id/tide_high_low"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="24dp"
-            android:background="@color/primaryLightColor"
-            android:padding="8dp"
+    <TextView
+        android:id="@+id/tide_time"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:padding="8dp"
+        android:textAppearance="@style/TextAppearance.MaterialComponents.Subtitle2"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        tools:text="2:48 PM" />
 
-            android:textAppearance="@style/TextAppearance.MaterialComponents.Subtitle2"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintStart_toEndOf="@+id/tide_date"
-            app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintVertical_bias="1.0"
-            tools:text="High" />
-
-        <TextView
-            android:id="@+id/tide_height"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginEnd="3dp"
-            android:background="@color/primaryLightColor"
-            android:padding="8dp"
-            android:textAppearance="@style/TextAppearance.MaterialComponents.Subtitle2"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-            tools:text="4.8'" />
-
-        <TextView
-            android:id="@+id/tide_time"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:background="@color/primaryLightColor"
-            android:padding="8dp"
-            android:textAppearance="@style/TextAppearance.MaterialComponents.Subtitle2"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toStartOf="@+id/tide_height"
-            app:layout_constraintStart_toEndOf="@+id/tide_high_low"
-            app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintVertical_bias="0.0"
-            tools:text="2:48 PM" />
-    </androidx.constraintlayout.widget.ConstraintLayout>
-</com.google.android.material.card.MaterialCardView>
+</androidx.constraintlayout.widget.ConstraintLayout>

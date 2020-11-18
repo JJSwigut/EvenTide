@@ -17,7 +17,7 @@ interface Service {
         @Query("key") tideApiKey: String
     ): Response<StationList>
 
-    @GET("v2?heights&extremes&date=2020-11-10&days=7")
+    @GET("v2?heights&extremes&days=7")
     suspend fun getTides(
         @Query("date") date: String,
         @Query("lat") lat: Double,
