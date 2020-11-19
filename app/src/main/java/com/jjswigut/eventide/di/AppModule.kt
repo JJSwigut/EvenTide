@@ -21,6 +21,9 @@ import javax.inject.Singleton
 @InstallIn(ApplicationComponent::class)
 object AppModule {
 
+//    "https://www.worldtides.info/api/"
+
+
     @Singleton
     @Provides
     fun provideRetrofit(gson: Gson) : Retrofit = Retrofit.Builder()
@@ -36,7 +39,7 @@ object AppModule {
 
     @Singleton
     @Provides
-    fun provideCharacterRemoteDataSource(service: Service) = RemoteDataSource(service)
+    fun provideRemoteDataSource(service: Service) = RemoteDataSource(service)
 
     @Singleton
     @Provides

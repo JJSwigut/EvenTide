@@ -1,20 +1,28 @@
 package com.jjswigut.eventide.data.remote
 
+
 import com.jjswigut.eventide.data.entities.StationList
 import com.jjswigut.eventide.data.entities.TideList
 import retrofit2.Response
 import retrofit2.http.GET
-import retrofit2.http.Path
+
 import retrofit2.http.Query
 
+
 interface Service {
-    @GET("v2?stations&lat=33.768321&lon=-118.195617&stationDistance=50")
+
+    @GET("v2?stations&stationDistance=50")
     suspend fun getStations(
-        @Query("key") tideApikey: String
+        @Query("lat") lat: Double,
+        @Query("lon") lon: Double,
+        @Query("key") tideApiKey: String
     ): Response<StationList>
 
-    @GET("v2?heights&extremes&date=2020-10-18&lat=33.768321&lon=-118.195617&days={api_key}")
+    @GET("v2?heights&extremes&days=7")
     suspend fun getTides(
-        @Path("api_key") tideApikey: String
-    ): Response<TideList>
+        @Query("date") date: String,
+        @Query("lat") lat: Double,
+        @Query("lon") lon: Double,
+        @Query("key") tideApiKey: String
+    ): Response<Tides>
 }

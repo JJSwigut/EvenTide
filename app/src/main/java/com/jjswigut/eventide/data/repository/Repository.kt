@@ -8,7 +8,9 @@ import javax.inject.Inject
 class Repository @Inject constructor(
     private val remoteDataSource: RemoteDataSource,
     private val localDataSource: Dao
+
 ) {
+
 
     fun getTides() = performGetOperation(
         databaseQuery = { localDataSource.getTides() },
@@ -16,9 +18,12 @@ class Repository @Inject constructor(
         saveCallResult = { localDataSource.insertTides(it.extremes) }
     )
 
-    fun getStations() = performGetOperation(
+    fun getStations(lat: Double, lon: Double) = performGetOperation(
         databaseQuery = { localDataSource.getStations() },
-        networkCall = { remoteDataSource.getStations() },
+        networkCall = { remoteDataSource.getStations(lat, lon) },
         saveCallResult = { localDataSource.insertStations(it.stations) }
     )
+
+
+
 }

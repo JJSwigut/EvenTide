@@ -4,7 +4,7 @@ import android.content.Context
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentManager
 import androidx.fragment.app.FragmentPagerAdapter
-import com.jjswigut.eventide.ui.map.MapFragment
+import com.jjswigut.eventide.ui.map.MapsFragment
 import com.jjswigut.eventide.ui.search.SearchFragment
 import com.jjswigut.eventide.ui.tides.TidesFragment
 
@@ -20,7 +20,7 @@ class TabAdapter internal constructor(
                 SearchFragment()
             }
             1 -> {
-                MapFragment()
+                MapsFragment()
             }
             2 -> {
                 TidesFragment()

@@ -14,6 +14,7 @@ import com.jjswigut.eventide.utils.ListDiffCallback
 class StationListAdapter(private val actionHandler: StationActionHandler) :
     RecyclerView.Adapter<StationListAdapter.ViewHolder>() {
 
+
     private val elements: ArrayList<TidalStation> = arrayListOf()
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
@@ -55,19 +56,19 @@ class StationListAdapter(private val actionHandler: StationActionHandler) :
 
         private val nameView: TextView = binding.stationNameView
         private val distanceView: TextView = binding.stationDistanceView
-        private fun element() = elements[adapterPosition]
+        fun element() = elements[adapterPosition]
+
 
         fun bind(item: TidalStation) {
-            //use element() here to set up your view and do any onclicks that ya want
+
             nameView.text = element().name
             distanceView.text = element().id
             binding.stationView.setOnClickListener {
                 actionHandler(StationAction.StationClicked(position, item))
             }
-
-
         }
     }
+
 
 }
 
