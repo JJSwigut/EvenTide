@@ -12,5 +12,4 @@ class RemoteDataSource @Inject constructor(
     suspend fun getStations(lat: Double, lon: Double) =
         getResult { service.getStations(lat, lon, apiKey) }
 
-    suspend fun getTides() = getResult { service.getTides(apiKey) }
 }

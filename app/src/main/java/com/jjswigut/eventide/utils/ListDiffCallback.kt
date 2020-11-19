@@ -1,6 +1,5 @@
 package com.jjswigut.eventide.utils
 
-import androidx.annotation.Nullable
 import androidx.recyclerview.widget.DiffUtil
 import com.jjswigut.eventide.data.entities.TidalStation
 
@@ -22,8 +21,4 @@ class ListDiffCallback(
         return oldList[oldPosition].name == newList[newPosition].name
     }
 
-    @Nullable
-    override fun getChangePayload(oldPosition: Int, newPosition: Int): Any? {
-        return super.getChangePayload(oldPosition, newPosition)
-    }
 }
