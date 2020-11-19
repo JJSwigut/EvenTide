@@ -7,7 +7,7 @@ plugins {
     id 'dagger.hilt.android.plugin'
 }
 
-android {
+android{
     compileSdkVersion 30
     buildToolsVersion "30.0.0"
 
