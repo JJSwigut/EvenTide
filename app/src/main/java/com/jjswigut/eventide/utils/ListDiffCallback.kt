@@ -1,6 +1,5 @@
 package com.jjswigut.eventide.utils
 
-import androidx.annotation.Nullable
 import androidx.recyclerview.widget.DiffUtil
 
 
@@ -21,8 +20,4 @@ class ListDiffCallback(
         return oldList[oldPosition] == newList[newPosition]
     }
 
-    @Nullable
-    override fun getChangePayload(oldPosition: Int, newPosition: Int): Any? {
-        return super.getChangePayload(oldPosition, newPosition)
-    }
 }

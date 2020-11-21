@@ -5,6 +5,7 @@ import com.jjswigut.eventide.data.entities.StationList
 import com.jjswigut.eventide.data.entities.Tides
 import retrofit2.Response
 import retrofit2.http.GET
+
 import retrofit2.http.Query
 
 
