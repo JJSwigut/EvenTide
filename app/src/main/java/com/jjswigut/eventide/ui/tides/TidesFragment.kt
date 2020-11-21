@@ -65,8 +65,8 @@ class TidesFragment : BaseFragment() {
         viewModel.tidesLiveData.observe(viewLifecycleOwner, Observer { list ->
             if (!list.isNullOrEmpty()) {
                 var sordidTides = list.groupBy { it.date.take(10) }
-                var flatTides =
-                    sordidTides.flatMap { date -> mutableListOf<Any>(date.key).also { it.addAll(date.value) } }
+                var flatTides = sordidTides.toList()
+
                 Log.d(TAG, "setupObservers: $flatTides")
                 listAdapter.submitData(flatTides as ArrayList<UIModel>)
 
@@ -74,7 +74,8 @@ class TidesFragment : BaseFragment() {
 
         })
     }
-
+//    sordidTides.flatMap { date -> mutableListOf<Any>(date.key).also { it.addAll(date.value) } }
+//
 
     private fun getAndObserveTides(it: Location) {
         viewModel.getTidesWithLocation(viewModel.userLocation.value!!)
@@ -87,12 +88,14 @@ class TidesFragment : BaseFragment() {
     }
 
     private fun setupRecyclerView() {
-        binding.dayRecyclerView.layoutManager = LinearLayoutManager(requireContext())
-        binding.dayRecyclerView.adapter = listAdapter
+        binding.tideRecyclerView.layoutManager = LinearLayoutManager(requireContext())
+        binding.tideRecyclerView.adapter = listAdapter
     }
 
     override fun onDestroyView() {
         super.onDestroyView()
         _binding = null
     }
+
+
 }

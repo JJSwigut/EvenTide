@@ -42,7 +42,7 @@ class SearchFragment : BaseFragment() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         fusedLocationClient = LocationServices.getFusedLocationProviderClient(requireActivity())
-        listAdapter = StationListAdapter(::handleAction)
+        listAdapter = StationListAdapter(::handleAction, viewModel.userLocation.value!!)
         getLastLocation()
 
 

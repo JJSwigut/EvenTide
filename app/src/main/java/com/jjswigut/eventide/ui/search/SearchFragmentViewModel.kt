@@ -17,7 +17,6 @@ class SearchFragmentViewModel @ViewModelInject constructor(
 
     private var mockLocation = Location("")
 
-
     val userLocation = MutableLiveData<Location>()
     val stationLiveData = MutableLiveData<List<TidalStation>>()
     val tidesLiveData = MutableLiveData<List<Extreme>>()
@@ -29,9 +28,6 @@ class SearchFragmentViewModel @ViewModelInject constructor(
 
     }
 
-    val sordidTides = tidesLiveData.value?.groupBy { it.date.take(10) }
-    val flattenedTides =
-        sordidTides?.flatMap { date -> mutableListOf<Any>(date.key).also { it.addAll(date.value) } }
 
     fun getStationsWithLocation(location: Location): LiveData<Resource<List<TidalStation>>> {
         return repo.getStations(location.latitude, location.longitude)

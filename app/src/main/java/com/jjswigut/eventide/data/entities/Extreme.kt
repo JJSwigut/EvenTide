@@ -6,11 +6,9 @@ import androidx.room.PrimaryKey
 
 @Entity(tableName = "tide_table")
 data class Extreme(
-    @PrimaryKey(autoGenerate = true)
-    val id: Long,
     @ColumnInfo
     val date: String,
-    @ColumnInfo
+    @PrimaryKey
     val dt: Int,
     @ColumnInfo
     val height: Double,

@@ -1,5 +1,7 @@
 package com.jjswigut.eventide.ui.tides
 
+import android.content.ContentValues.TAG
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import android.widget.TextView
@@ -18,6 +20,7 @@ class TidesListAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
     fun submitData(list: ArrayList<UIModel>) {
         elements.clear()
         elements.addAll(list)
+        Log.d(TAG, "submitData: $list ")
     }
 
     override fun getItemCount(): Int = elements.size
@@ -88,4 +91,8 @@ class TidesListAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
 
     }
 
+
 }
+
+
+
