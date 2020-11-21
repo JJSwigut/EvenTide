@@ -5,6 +5,7 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import android.widget.TextView
+import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
 import com.jjswigut.eventide.R
 import com.jjswigut.eventide.data.entities.UIModel
@@ -18,9 +19,17 @@ class TidesListAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
     private var elements: ArrayList<UIModel> = ArrayList()
 
     fun submitData(list: ArrayList<UIModel>) {
+        val update = DiffUtil.calculateDiff(
+            TidesDiffCallback(
+                newList = list,
+                oldList = elements
+            )
+        )
+
         elements.clear()
         elements.addAll(list)
-        Log.d(TAG, "submitData: $list ")
+
+        update.dispatchUpdatesTo(this)
     }
 
     override fun getItemCount(): Int = elements.size

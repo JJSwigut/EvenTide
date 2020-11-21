@@ -11,6 +11,7 @@ import android.view.ViewGroup
 import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.Observer
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.jjswigut.eventide.data.entities.DayHeader
 import com.jjswigut.eventide.data.entities.UIModel
 import com.jjswigut.eventide.databinding.FragmentTidesBinding
 import com.jjswigut.eventide.ui.BaseFragment
@@ -68,7 +69,15 @@ class TidesFragment : BaseFragment() {
                 var flatTides = sordidTides.toList()
 
                 Log.d(TAG, "setupObservers: $flatTides")
-                listAdapter.submitData(flatTides as ArrayList<UIModel>)
+                //listAdapter.submitData(flatTides as ArrayList<UIModel>)
+                val uiModels = arrayListOf<UIModel>()
+                flatTides.forEach { pair ->
+                    uiModels.add(UIModel.DayModel(DayHeader(pair.first)))
+                    pair.second.forEach { extreme ->
+                        uiModels.add(UIModel.TideModel(extreme))
+                    }
+                }
+                listAdapter.submitData(uiModels)
 
             }
 
