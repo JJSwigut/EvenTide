@@ -11,6 +11,7 @@ import android.view.ViewGroup
 import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.Observer
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.jjswigut.eventide.data.entities.DayHeader
 import com.jjswigut.eventide.data.entities.UIModel
 import com.jjswigut.eventide.databinding.FragmentTidesBinding
 import com.jjswigut.eventide.ui.BaseFragment
@@ -64,18 +65,20 @@ class TidesFragment : BaseFragment() {
         })
         viewModel.tidesLiveData.observe(viewLifecycleOwner, Observer { list ->
             if (!list.isNullOrEmpty()) {
-                var sordidTides = list.groupBy { it.date.take(10) }
-                var flatTides = sordidTides.toList()
-
-                Log.d(TAG, "setupObservers: $flatTides")
-                listAdapter.submitData(flatTides as ArrayList<UIModel>)
+                val sordidTides = list.groupBy { it.date.take(10) }
+                val uiModels = arrayListOf<UIModel>()
+                sordidTides.forEach { map ->
+                    uiModels.add(UIModel.DayModel(DayHeader(map.key)))
+                    map.value.forEach { extreme ->
+                        uiModels.add(UIModel.TideModel(extreme))
+                    }
+                }
+                listAdapter.updateData(uiModels)
 
             }
 
         })
     }
-//    sordidTides.flatMap { date -> mutableListOf<Any>(date.key).also { it.addAll(date.value) } }
-//
 
     private fun getAndObserveTides(it: Location) {
         viewModel.getTidesWithLocation(viewModel.userLocation.value!!)

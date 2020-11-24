@@ -1,15 +1,15 @@
 package com.jjswigut.eventide.ui.tides
 
-import android.content.ContentValues.TAG
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import android.widget.TextView
+import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
 import com.jjswigut.eventide.R
 import com.jjswigut.eventide.data.entities.UIModel
 import com.jjswigut.eventide.databinding.DayHeaderBinding
 import com.jjswigut.eventide.databinding.ItemTideBinding
+import com.jjswigut.eventide.utils.ListDiffCallback
 
 
 class TidesListAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
@@ -17,11 +17,16 @@ class TidesListAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
 
     private var elements: ArrayList<UIModel> = ArrayList()
 
-    fun submitData(list: ArrayList<UIModel>) {
+    fun updateData(newData: List<UIModel>) {
+
+        val diffResult = DiffUtil.calculateDiff(
+            ListDiffCallback(newList = newData, oldList = elements)
+        )
         elements.clear()
-        elements.addAll(list)
-        Log.d(TAG, "submitData: $list ")
+        elements.addAll(newData)
+        diffResult.dispatchUpdatesTo(this)
     }
+
 
     override fun getItemCount(): Int = elements.size
 
@@ -74,11 +79,40 @@ class TidesListAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
 
         fun bind(item: UIModel.TideModel) {
             highLowView.text = item.tideItem.type
-            timeView.text = item.tideItem.dt.toString()
-            heightView.text = item.tideItem.height.toString()
+            timeView.text = timeFormatter(item.tideItem.date)
+            heightView.text = heightString(item.tideItem.height)
+        }
+
+        private fun timeFormatter(date: String): String {
+            val fullDate = date.take(16)
+            val time = fullDate.takeLast(5)
+            var hour = time.take(2).toInt()
+            var timeStamp = ""
+            var timeString = ""
+
+            if (hour >= 12) {
+                timeStamp = " pm"
+            } else timeStamp = " am"
+
+            if (hour > 12) {
+                hour -= 12
+            } else if (hour == 0) {
+                hour = 12
+                timeStamp = " am"
+            }
+            if (hour < 10) {
+                timeString = hour.toString().takeLast(1) + time.takeLast(3)
+            } else timeString = hour.toString().takeLast(2) + time.takeLast(3)
+
+            return timeString + timeStamp
+        }
+
+        private fun heightString(height: Double): String {
+            return "$height m"
         }
     }
 
+    // "2020-11-28T09:14+0000"
     inner class DayViewHolder(
         private val binding: DayHeaderBinding
     ) : RecyclerView.ViewHolder(binding.root) {

@@ -90,16 +90,14 @@ class SearchFragment : BaseFragment() {
         viewModel.userLocation.observe(viewLifecycleOwner, Observer {
             if (it != null) getAndObserveStations(it)
         })
-        viewModel.stationLiveData.observe(viewLifecycleOwner, Observer {
-            if (!it.isNullOrEmpty()) listAdapter.updateData(ArrayList(it))
-        })
     }
 
     private fun getAndObserveStations(it: Location) {
-        viewModel.getStationsWithLocation(viewModel.userLocation.value!!)
+        viewModel.getStationsWithLocation(it)
             .observe(viewLifecycleOwner, Observer {
                 if (!it.data.isNullOrEmpty())
                     listAdapter.updateData(ArrayList(it.data))
+                viewModel.stationLiveData.value = it.data
             })
     }
 

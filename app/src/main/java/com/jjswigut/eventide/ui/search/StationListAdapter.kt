@@ -60,7 +60,7 @@ class StationListAdapter(
 
         private val nameView: TextView = binding.stationNameView
         private val distanceView: TextView = binding.stationDistanceView
-        fun element() = elements[adapterPosition]
+        private fun element() = elements[adapterPosition]
 
 
         fun bind(item: TidalStation) {
