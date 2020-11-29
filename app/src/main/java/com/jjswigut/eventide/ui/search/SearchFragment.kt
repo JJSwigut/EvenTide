@@ -42,7 +42,11 @@ class SearchFragment : BaseFragment() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         fusedLocationClient = LocationServices.getFusedLocationProviderClient(requireActivity())
-        listAdapter = StationListAdapter(::handleAction, viewModel.userLocation.value!!)
+        listAdapter = StationListAdapter(
+            ::handleAction,
+            viewModel.userLocation.value!!,
+            viewModel.preferences
+        )
         getLastLocation()
 
 
@@ -55,7 +59,6 @@ class SearchFragment : BaseFragment() {
     ): View {
         _binding = FragmentSearchBinding.inflate(inflater, container, false)
         val view = binding.root
-
         return view
     }
 

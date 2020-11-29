@@ -2,6 +2,8 @@ package com.jjswigut.eventide.ui.tides
 
 
 import android.content.ContentValues.TAG
+import android.content.SharedPreferences
+import android.content.SharedPreferences.OnSharedPreferenceChangeListener
 import android.location.Location
 import android.os.Bundle
 import android.util.Log
@@ -11,29 +13,29 @@ import android.view.ViewGroup
 import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.Observer
 import androidx.recyclerview.widget.LinearLayoutManager
-import com.jjswigut.eventide.data.entities.DayHeader
-import com.jjswigut.eventide.data.entities.UIModel
 import com.jjswigut.eventide.databinding.FragmentTidesBinding
 import com.jjswigut.eventide.ui.BaseFragment
 import com.jjswigut.eventide.ui.search.SearchFragmentViewModel
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
-class TidesFragment : BaseFragment() {
+class TidesFragment : BaseFragment(), OnSharedPreferenceChangeListener {
 
     private var _binding: FragmentTidesBinding? = null
     private val binding get() = _binding!!
-
     private lateinit var listAdapter: TidesListAdapter
 
+
     private val viewModel: SearchFragmentViewModel by activityViewModels()
+    private lateinit var prefs: SharedPreferences
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        listAdapter = TidesListAdapter()
+        listAdapter = TidesListAdapter(viewModel.preferences)
+
+        prefs = viewModel.preferences.prefs
 
     }
-
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -43,20 +45,30 @@ class TidesFragment : BaseFragment() {
 
         _binding = FragmentTidesBinding.inflate(inflater, container, false)
         val view = binding.root
-
+        setupRecyclerView()
         return view
 
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        setupRecyclerView()
+        setupObservers()
+
     }
 
     override fun onResume() {
         super.onResume()
-        setupObservers()
+        prefs.registerOnSharedPreferenceChangeListener(this)
 
+    }
+
+    override fun onSharedPreferenceChanged(sharedPreferences: SharedPreferences?, key: String?) {
+        listAdapter.updateData(viewModel.sortedTidesLiveData.value!!)
+    }
+
+    override fun onPause() {
+        super.onPause()
+        prefs.unregisterOnSharedPreferenceChangeListener(this)
     }
 
     private fun setupObservers() {
@@ -65,18 +77,8 @@ class TidesFragment : BaseFragment() {
         })
         viewModel.tidesLiveData.observe(viewLifecycleOwner, Observer { list ->
             if (!list.isNullOrEmpty()) {
-                val sordidTides = list.groupBy { it.date.take(10) }
-                val uiModels = arrayListOf<UIModel>()
-                sordidTides.forEach { map ->
-                    uiModels.add(UIModel.DayModel(DayHeader(map.key)))
-                    map.value.forEach { extreme ->
-                        uiModels.add(UIModel.TideModel(extreme))
-                    }
-                }
-                listAdapter.updateData(uiModels)
-
+                listAdapter.updateData(viewModel.sortTides(list))
             }
-
         })
     }
 
@@ -98,7 +100,7 @@ class TidesFragment : BaseFragment() {
     override fun onDestroyView() {
         super.onDestroyView()
         _binding = null
-    }
 
+    }
 
 }

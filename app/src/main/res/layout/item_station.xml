@@ -5,8 +5,9 @@
     android:id="@+id/station_view"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:orientation="vertical"
+    android:animateLayoutChanges="true"
     android:clickable="true"
+    android:orientation="vertical"
     android:padding="4dp">
 
     <com.google.android.material.textview.MaterialTextView

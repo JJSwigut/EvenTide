@@ -10,10 +10,13 @@ import com.jjswigut.eventide.data.entities.UIModel
 import com.jjswigut.eventide.databinding.DayHeaderBinding
 import com.jjswigut.eventide.databinding.ItemTideBinding
 import com.jjswigut.eventide.utils.ListDiffCallback
+import com.jjswigut.eventide.utils.Preferences
+import java.time.LocalDate
+import java.time.format.DateTimeFormatter
 
 
-class TidesListAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
-
+class TidesListAdapter(private val prefs: Preferences) :
+    RecyclerView.Adapter<RecyclerView.ViewHolder>() {
 
     private var elements: ArrayList<UIModel> = ArrayList()
 
@@ -52,8 +55,10 @@ class TidesListAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
                 binding = ItemTideBinding.inflate(
                     LayoutInflater.from(
                         parent.context
-                    ), parent, false
-                )
+                    ),
+                    parent, false
+                ),
+                prefs = prefs
             )
             else -> throw Exception("Nope")
         }
@@ -69,8 +74,10 @@ class TidesListAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
     }
 
     inner class TideViewHolder(
-        private val binding: ItemTideBinding
+        private val binding: ItemTideBinding,
+        private val prefs: Preferences
     ) : RecyclerView.ViewHolder(binding.root) {
+
 
         private val highLowView: TextView = binding.tideHighLow
         private val timeView: TextView = binding.tideTime
@@ -81,6 +88,7 @@ class TidesListAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
             highLowView.text = item.tideItem.type
             timeView.text = timeFormatter(item.tideItem.date)
             heightView.text = heightString(item.tideItem.height)
+            //heightString(item.tideItem.height)
         }
 
         private fun timeFormatter(date: String): String {
@@ -90,9 +98,9 @@ class TidesListAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
             var timeStamp = ""
             var timeString = ""
 
-            if (hour >= 12) {
-                timeStamp = " pm"
-            } else timeStamp = " am"
+            timeStamp = if (hour >= 12) {
+                " pm"
+            } else " am"
 
             if (hour > 12) {
                 hour -= 12
@@ -100,15 +108,18 @@ class TidesListAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
                 hour = 12
                 timeStamp = " am"
             }
-            if (hour < 10) {
-                timeString = hour.toString().takeLast(1) + time.takeLast(3)
-            } else timeString = hour.toString().takeLast(2) + time.takeLast(3)
+            timeString = if (hour < 10) {
+                hour.toString().takeLast(1) + time.takeLast(3)
+            } else hour.toString().takeLast(2) + time.takeLast(3)
 
             return timeString + timeStamp
         }
 
         private fun heightString(height: Double): String {
-            return "$height m"
+            return if (prefs.units == true) {
+                val heightInFeet = (height * 3.28084)
+                String.format("%.2f ft", heightInFeet)
+            } else String.format("%.2f m", height)
         }
     }
 
@@ -120,7 +131,13 @@ class TidesListAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
         private val dayView: TextView = binding.dayHeader
 
         fun bind(item: UIModel.DayModel) {
-            dayView.text = item.dayHeader.day
+            dayView.text = dayFormatter(item.dayHeader.day)
+        }
+
+        private fun dayFormatter(date: String): String {
+
+            val parsedDate = LocalDate.parse(date, DateTimeFormatter.ISO_LOCAL_DATE)
+            return parsedDate.format(DateTimeFormatter.ofPattern("EEEE, MMM dd, yyyy"))
         }
 
     }
