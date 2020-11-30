@@ -2,8 +2,6 @@ package com.jjswigut.eventide.ui.tides
 
 
 import android.content.ContentValues.TAG
-import android.content.SharedPreferences
-import android.content.SharedPreferences.OnSharedPreferenceChangeListener
 import android.location.Location
 import android.os.Bundle
 import android.util.Log
@@ -19,7 +17,7 @@ import com.jjswigut.eventide.ui.search.SearchFragmentViewModel
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
-class TidesFragment : BaseFragment(), OnSharedPreferenceChangeListener {
+class TidesFragment : BaseFragment() {
 
     private var _binding: FragmentTidesBinding? = null
     private val binding get() = _binding!!
@@ -27,13 +25,11 @@ class TidesFragment : BaseFragment(), OnSharedPreferenceChangeListener {
 
 
     private val viewModel: SearchFragmentViewModel by activityViewModels()
-    private lateinit var prefs: SharedPreferences
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        listAdapter = TidesListAdapter(viewModel.preferences)
-
-        prefs = viewModel.preferences.prefs
+        listAdapter = TidesListAdapter(viewModel)
 
     }
 
@@ -50,34 +46,18 @@ class TidesFragment : BaseFragment(), OnSharedPreferenceChangeListener {
 
     }
 
-    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        super.onViewCreated(view, savedInstanceState)
-        setupObservers()
-
-    }
-
     override fun onResume() {
         super.onResume()
-        prefs.registerOnSharedPreferenceChangeListener(this)
-
-    }
-
-    override fun onSharedPreferenceChanged(sharedPreferences: SharedPreferences?, key: String?) {
-        listAdapter.updateData(viewModel.sortedTidesLiveData.value!!)
-    }
-
-    override fun onPause() {
-        super.onPause()
-        prefs.unregisterOnSharedPreferenceChangeListener(this)
+        setupObservers()
     }
 
     private fun setupObservers() {
         viewModel.userLocation.observe(viewLifecycleOwner, Observer {
             if (it != null) getAndObserveTides(it)
         })
-        viewModel.tidesLiveData.observe(viewLifecycleOwner, Observer { list ->
+        viewModel.sortedTidesLiveData.observe(viewLifecycleOwner, Observer { list ->
             if (!list.isNullOrEmpty()) {
-                listAdapter.updateData(viewModel.sortTides(list))
+                listAdapter.updateData(list)
             }
         })
     }
@@ -86,7 +66,7 @@ class TidesFragment : BaseFragment(), OnSharedPreferenceChangeListener {
         viewModel.getTidesWithLocation(viewModel.userLocation.value!!)
             .observe(viewLifecycleOwner, Observer {
                 if (!it.data.isNullOrEmpty()) {
-                    viewModel.tidesLiveData.value = it.data
+                    viewModel.sortedTidesLiveData.value = viewModel.sortTides(it.data)
                     Log.d(TAG, "getAndObserveTides: tides observed")
                 }
             })

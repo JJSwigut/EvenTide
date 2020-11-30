@@ -9,13 +9,14 @@ import com.jjswigut.eventide.R
 import com.jjswigut.eventide.data.entities.UIModel
 import com.jjswigut.eventide.databinding.DayHeaderBinding
 import com.jjswigut.eventide.databinding.ItemTideBinding
+import com.jjswigut.eventide.ui.search.SearchFragmentViewModel
 import com.jjswigut.eventide.utils.ListDiffCallback
 import com.jjswigut.eventide.utils.Preferences
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
 
 
-class TidesListAdapter(private val prefs: Preferences) :
+class TidesListAdapter(private val viewModel: SearchFragmentViewModel) :
     RecyclerView.Adapter<RecyclerView.ViewHolder>() {
 
     private var elements: ArrayList<UIModel> = ArrayList()
@@ -37,7 +38,6 @@ class TidesListAdapter(private val prefs: Preferences) :
         when (elements[position]) {
             is UIModel.DayModel -> R.layout.day_header
             is UIModel.TideModel -> R.layout.item_tide
-            null -> throw IllegalArgumentException("Unknown View")
         }
 
 
@@ -58,7 +58,7 @@ class TidesListAdapter(private val prefs: Preferences) :
                     ),
                     parent, false
                 ),
-                prefs = prefs
+                prefs = viewModel.preferences
             )
             else -> throw Exception("Nope")
         }
@@ -88,7 +88,7 @@ class TidesListAdapter(private val prefs: Preferences) :
             highLowView.text = item.tideItem.type
             timeView.text = timeFormatter(item.tideItem.date)
             heightView.text = heightString(item.tideItem.height)
-            //heightString(item.tideItem.height)
+
         }
 
         private fun timeFormatter(date: String): String {
@@ -116,14 +116,14 @@ class TidesListAdapter(private val prefs: Preferences) :
         }
 
         private fun heightString(height: Double): String {
-            return if (prefs.units == true) {
+            return if (prefs.prefs.getBoolean("units", false)) {
                 val heightInFeet = (height * 3.28084)
                 String.format("%.2f ft", heightInFeet)
             } else String.format("%.2f m", height)
         }
     }
 
-    // "2020-11-28T09:14+0000"
+
     inner class DayViewHolder(
         private val binding: DayHeaderBinding
     ) : RecyclerView.ViewHolder(binding.root) {

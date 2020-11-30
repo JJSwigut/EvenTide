@@ -53,7 +53,6 @@ class SearchFragmentViewModel @ViewModelInject constructor(
                 uiModels.add(UIModel.TideModel(extreme))
             }
         }
-        sortedTidesLiveData.value = uiModels
         return uiModels
     }
 }
