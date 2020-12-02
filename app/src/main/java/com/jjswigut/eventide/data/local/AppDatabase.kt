@@ -4,10 +4,10 @@ import android.content.Context
 import androidx.room.Database
 import androidx.room.Room
 import androidx.room.RoomDatabase
+import com.jjswigut.eventide.data.entities.Extreme
 import com.jjswigut.eventide.data.entities.TidalStation
-import com.jjswigut.eventide.data.entities.Tide
 
-@Database(entities = [Tide::class,TidalStation::class], version = 1, exportSchema = false)
+@Database(entities = [Extreme::class, TidalStation::class], version = 4, exportSchema = false)
 abstract class AppDatabase : RoomDatabase() {
 
     abstract fun dao(): Dao

@@ -2,10 +2,8 @@ package com.jjswigut.eventide.ui.map
 
 import android.Manifest
 import android.Manifest.permission.ACCESS_COARSE_LOCATION
-import android.content.ContentValues.TAG
 import android.content.pm.PackageManager
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -20,6 +18,7 @@ import com.google.android.gms.maps.SupportMapFragment
 import com.google.android.gms.maps.model.LatLng
 import com.google.android.gms.maps.model.MarkerOptions
 import com.jjswigut.eventide.R
+import com.jjswigut.eventide.data.entities.TidalStation
 import com.jjswigut.eventide.ui.BaseFragment
 import com.jjswigut.eventide.ui.search.SearchFragmentViewModel
 import dagger.hilt.android.AndroidEntryPoint
@@ -30,6 +29,7 @@ class MapsFragment : BaseFragment() {
     private val REQUEST_LOCATION_PERMISSION = 1
     private lateinit var map: GoogleMap
     private val viewModel: SearchFragmentViewModel by activityViewModels()
+    private var stationList = arrayListOf<LatLng>()
 
 
     private val callback = OnMapReadyCallback { googleMap ->
@@ -39,6 +39,10 @@ class MapsFragment : BaseFragment() {
         if (loc != null) {
             val location = LatLng(loc.latitude, loc.longitude)
             googleMap.addMarker(MarkerOptions().position(location).title("You are here!"))
+            stationList.forEach { station ->
+                googleMap.addMarker(MarkerOptions().position(station))
+            }
+
             googleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(location, zoom))
             enableMyLocation()
         }
@@ -56,10 +60,14 @@ class MapsFragment : BaseFragment() {
 
     override fun onResume() {
         super.onResume()
-        viewModel.userLocation.observe(this) {
-            updateMap()
+        viewModel.stationLiveData.observe(this) { list ->
+            if (!list.isNullOrEmpty()) {
+                observeStationsforMarkers(list)
+                updateMap()
+            }
         }
-        Log.d(TAG, "onResume: update map ${viewModel.userLocation.value}")
+
+
     }
 
 
@@ -94,6 +102,10 @@ class MapsFragment : BaseFragment() {
         }
     }
 
+    private fun observeStationsforMarkers(list: List<TidalStation>) {
+        list.forEach { station -> stationList.add(LatLng(station.lat, station.lon)) }
+
+    }
 
     private fun updateMap() {
         val mapFragment = childFragmentManager.findFragmentById(R.id.map) as SupportMapFragment?

@@ -42,7 +42,7 @@ class SearchFragment : BaseFragment() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         fusedLocationClient = LocationServices.getFusedLocationProviderClient(requireActivity())
-        listAdapter = StationListAdapter(::handleAction)
+        listAdapter = StationListAdapter(::handleAction, viewModel.userLocation.value!!)
         getLastLocation()
 
 
@@ -61,7 +61,6 @@ class SearchFragment : BaseFragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-
         setupRecyclerView()
         Log.d(TAG, "onViewCreated: RecyclerView Set up")
     }
@@ -91,16 +90,14 @@ class SearchFragment : BaseFragment() {
         viewModel.userLocation.observe(viewLifecycleOwner, Observer {
             if (it != null) getAndObserveStations(it)
         })
-        viewModel.stationLiveData.observe(viewLifecycleOwner, Observer {
-            if (!it.isNullOrEmpty()) listAdapter.updateData(ArrayList(it))
-        })
     }
 
     private fun getAndObserveStations(it: Location) {
-        viewModel.getStationsWithLocation(viewModel.userLocation.value!!)
+        viewModel.getStationsWithLocation(it)
             .observe(viewLifecycleOwner, Observer {
                 if (!it.data.isNullOrEmpty())
                     listAdapter.updateData(ArrayList(it.data))
+                viewModel.stationLiveData.value = it.data
             })
     }
 
@@ -132,8 +129,6 @@ class SearchFragment : BaseFragment() {
         }
         fusedLocationClient.lastLocation.addOnSuccessListener { location: Location? ->
             if (location != null) {
-                viewModel.userLocation.value = location
-
                 Log.d(TAG, "getLastLocation: got location")
             }
 

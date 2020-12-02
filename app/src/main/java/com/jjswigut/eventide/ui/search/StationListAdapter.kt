@@ -1,5 +1,6 @@
 package com.jjswigut.eventide.ui.search
 
+import android.location.Location
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import android.widget.TextView
@@ -11,7 +12,10 @@ import com.jjswigut.eventide.ui.StationAction
 import com.jjswigut.eventide.utils.ListDiffCallback
 
 
-class StationListAdapter(private val actionHandler: StationActionHandler) :
+class StationListAdapter(
+    private val actionHandler: StationActionHandler,
+    private val userLocation: Location
+) :
     RecyclerView.Adapter<StationListAdapter.ViewHolder>() {
 
 
@@ -56,16 +60,26 @@ class StationListAdapter(private val actionHandler: StationActionHandler) :
 
         private val nameView: TextView = binding.stationNameView
         private val distanceView: TextView = binding.stationDistanceView
-        fun element() = elements[adapterPosition]
+        private fun element() = elements[adapterPosition]
 
 
         fun bind(item: TidalStation) {
 
             nameView.text = element().name
-            distanceView.text = element().id
+            distanceView.text = distance()
             binding.stationView.setOnClickListener {
                 actionHandler(StationAction.StationClicked(position, item))
             }
+        }
+
+        private fun distance(): String {
+            val stationLocation = Location("")
+            stationLocation.latitude = element().lat
+            stationLocation.longitude = element().lon
+            val distance = userLocation
+                .distanceTo(stationLocation).div(1000)
+                .toString().take(4)
+            return ("$distance km ")
         }
     }
 
