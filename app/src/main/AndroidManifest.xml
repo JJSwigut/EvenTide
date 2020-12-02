@@ -9,9 +9,9 @@
 
     <application
         android:name=".EvenTideApplication"
-        android:icon="@mipmap/ic_launcher"
+        android:icon="@mipmap/ic_eventide"
         android:label="@string/app_name"
-        android:roundIcon="@mipmap/ic_launcher_round"
+        android:roundIcon="@mipmap/ic_eventide_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.EvenTide">
 

@@ -83,7 +83,7 @@ class StationListAdapter(
             val distance = userLocation
                 .distanceTo(stationLocation).div(1000)
                 .toString().take(4)
-            return if (prefs.prefs.getBoolean("units", false)) {
+            return if (prefs.units) {
                 val distanceInMiles = (distance.toDouble() * 0.6214)
                 String.format("%.2f mi", distanceInMiles)
             } else ("$distance km")

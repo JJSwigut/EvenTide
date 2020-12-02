@@ -116,7 +116,7 @@ class TidesListAdapter(private val viewModel: SearchFragmentViewModel) :
         }
 
         private fun heightString(height: Double): String {
-            return if (prefs.prefs.getBoolean("units", false)) {
+            return if (prefs.units) {
                 val heightInFeet = (height * 3.28084)
                 String.format("%.2f ft", heightInFeet)
             } else String.format("%.2f m", height)
