@@ -42,10 +42,11 @@ class MapsFragment : BaseFragment() {
         val loc = viewModel.userLocation.value
 
         val location = LatLng(loc!!.latitude, loc.longitude)
-        googleMap.addMarker(
+        val youAreHere = googleMap.addMarker(
             MarkerOptions().position(location).title("You are here!")
                 .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_CYAN))
         )
+        youAreHere.showInfoWindow()
 
         stationList.forEach { station ->
             googleMap.addMarker(
@@ -104,7 +105,7 @@ class MapsFragment : BaseFragment() {
                     Manifest.permission.ACCESS_FINE_LOCATION
                 ) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(
                     requireContext(),
-                    Manifest.permission.ACCESS_COARSE_LOCATION
+                    ACCESS_COARSE_LOCATION
                 ) != PackageManager.PERMISSION_GRANTED
             ) {
 
@@ -114,7 +115,7 @@ class MapsFragment : BaseFragment() {
         } else {
             ActivityCompat.requestPermissions(
                 requireActivity(),
-                arrayOf<String>(Manifest.permission.ACCESS_FINE_LOCATION, ACCESS_COARSE_LOCATION),
+                arrayOf(Manifest.permission.ACCESS_FINE_LOCATION, ACCESS_COARSE_LOCATION),
                 REQUEST_LOCATION_PERMISSION
             )
 
@@ -133,6 +134,13 @@ class MapsFragment : BaseFragment() {
 
     private fun launchCustomTab(url: String) {
         val builder = CustomTabsIntent.Builder()
+        builder.setToolbarColor(ContextCompat.getColor(requireContext(), R.color.secondaryColor))
+        builder.setNavigationBarColor(
+            ContextCompat.getColor(
+                requireContext(),
+                R.color.primaryColor
+            )
+        )
         val customTabsIntent = builder.build()
         customTabsIntent.launchUrl(requireContext(), Uri.parse(url))
     }
