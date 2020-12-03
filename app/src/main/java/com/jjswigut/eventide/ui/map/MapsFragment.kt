@@ -23,7 +23,7 @@ import com.google.android.gms.maps.model.MarkerOptions
 import com.jjswigut.eventide.R
 import com.jjswigut.eventide.data.entities.TidalStation
 import com.jjswigut.eventide.ui.BaseFragment
-import com.jjswigut.eventide.ui.search.SearchFragmentViewModel
+import com.jjswigut.eventide.ui.SharedViewModel
 import dagger.hilt.android.AndroidEntryPoint
 
 
@@ -32,7 +32,7 @@ class MapsFragment : BaseFragment() {
 
     private val REQUEST_LOCATION_PERMISSION = 1
     private lateinit var map: GoogleMap
-    private val viewModel: SearchFragmentViewModel by activityViewModels()
+    private val viewModel: SharedViewModel by activityViewModels()
     private var stationList = arrayListOf<TidalStation>()
 
 
@@ -134,11 +134,11 @@ class MapsFragment : BaseFragment() {
 
     private fun launchCustomTab(url: String) {
         val builder = CustomTabsIntent.Builder()
-        builder.setToolbarColor(ContextCompat.getColor(requireContext(), R.color.secondaryColor))
+        builder.setToolbarColor(ContextCompat.getColor(requireContext(), R.color.primaryLightColor))
         builder.setNavigationBarColor(
             ContextCompat.getColor(
                 requireContext(),
-                R.color.primaryColor
+                R.color.primaryDarkColor
             )
         )
         val customTabsIntent = builder.build()

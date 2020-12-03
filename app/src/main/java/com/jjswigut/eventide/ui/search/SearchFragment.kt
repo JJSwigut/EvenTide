@@ -22,8 +22,8 @@ import com.google.android.gms.location.LocationServices
 import com.jjswigut.eventide.R
 import com.jjswigut.eventide.databinding.FragmentSearchBinding
 import com.jjswigut.eventide.ui.BaseFragment
-import com.jjswigut.eventide.ui.StationAction
-import com.jjswigut.eventide.ui.StationAction.StationClicked
+import com.jjswigut.eventide.ui.SharedViewModel
+import com.jjswigut.eventide.ui.search.StationAction.StationClicked
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
@@ -36,7 +36,7 @@ class SearchFragment : BaseFragment() {
 
     private lateinit var listAdapter: StationListAdapter
 
-    private val viewModel: SearchFragmentViewModel by activityViewModels()
+    private val viewModel: SharedViewModel by activityViewModels()
 
     private lateinit var fusedLocationClient: FusedLocationProviderClient
 
@@ -143,11 +143,11 @@ class SearchFragment : BaseFragment() {
     private fun launchCustomTab(url: String) {
         val builder = CustomTabsIntent.Builder()
 
-        builder.setToolbarColor(ContextCompat.getColor(requireContext(), R.color.secondaryColor))
+        builder.setToolbarColor(ContextCompat.getColor(requireContext(), R.color.primaryLightColor))
         builder.setNavigationBarColor(
             ContextCompat.getColor(
                 requireContext(),
-                R.color.primaryColor
+                R.color.primaryDarkColor
             )
         )
         val customTabsIntent = builder.build()
