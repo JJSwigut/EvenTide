@@ -13,11 +13,13 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.browser.customtabs.CustomTabsIntent
 import androidx.core.app.ActivityCompat
+import androidx.core.content.ContextCompat
 import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.Observer
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.location.LocationServices
+import com.jjswigut.eventide.R
 import com.jjswigut.eventide.databinding.FragmentSearchBinding
 import com.jjswigut.eventide.ui.BaseFragment
 import com.jjswigut.eventide.ui.StationAction
@@ -42,7 +44,11 @@ class SearchFragment : BaseFragment() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         fusedLocationClient = LocationServices.getFusedLocationProviderClient(requireActivity())
-        listAdapter = StationListAdapter(::handleAction, viewModel.userLocation.value!!)
+        listAdapter = StationListAdapter(
+            ::handleAction,
+            viewModel.userLocation.value!!,
+            viewModel.preferences
+        )
         getLastLocation()
 
 
@@ -55,7 +61,6 @@ class SearchFragment : BaseFragment() {
     ): View {
         _binding = FragmentSearchBinding.inflate(inflater, container, false)
         val view = binding.root
-
         return view
     }
 
@@ -137,6 +142,14 @@ class SearchFragment : BaseFragment() {
 
     private fun launchCustomTab(url: String) {
         val builder = CustomTabsIntent.Builder()
+
+        builder.setToolbarColor(ContextCompat.getColor(requireContext(), R.color.secondaryColor))
+        builder.setNavigationBarColor(
+            ContextCompat.getColor(
+                requireContext(),
+                R.color.primaryColor
+            )
+        )
         val customTabsIntent = builder.build()
         customTabsIntent.launchUrl(requireContext(), Uri.parse(url))
     }

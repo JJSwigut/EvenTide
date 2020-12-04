@@ -11,8 +11,6 @@ import android.view.ViewGroup
 import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.Observer
 import androidx.recyclerview.widget.LinearLayoutManager
-import com.jjswigut.eventide.data.entities.DayHeader
-import com.jjswigut.eventide.data.entities.UIModel
 import com.jjswigut.eventide.databinding.FragmentTidesBinding
 import com.jjswigut.eventide.ui.BaseFragment
 import com.jjswigut.eventide.ui.search.SearchFragmentViewModel
@@ -23,17 +21,17 @@ class TidesFragment : BaseFragment() {
 
     private var _binding: FragmentTidesBinding? = null
     private val binding get() = _binding!!
-
     private lateinit var listAdapter: TidesListAdapter
+
 
     private val viewModel: SearchFragmentViewModel by activityViewModels()
 
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        listAdapter = TidesListAdapter()
+        listAdapter = TidesListAdapter(viewModel)
 
     }
-
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -43,40 +41,24 @@ class TidesFragment : BaseFragment() {
 
         _binding = FragmentTidesBinding.inflate(inflater, container, false)
         val view = binding.root
-
+        setupRecyclerView()
         return view
 
-    }
-
-    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        super.onViewCreated(view, savedInstanceState)
-        setupRecyclerView()
     }
 
     override fun onResume() {
         super.onResume()
         setupObservers()
-
     }
 
     private fun setupObservers() {
         viewModel.userLocation.observe(viewLifecycleOwner, Observer {
             if (it != null) getAndObserveTides(it)
         })
-        viewModel.tidesLiveData.observe(viewLifecycleOwner, Observer { list ->
+        viewModel.sortedTidesLiveData.observe(viewLifecycleOwner, Observer { list ->
             if (!list.isNullOrEmpty()) {
-                val sordidTides = list.groupBy { it.date.take(10) }
-                val uiModels = arrayListOf<UIModel>()
-                sordidTides.forEach { map ->
-                    uiModels.add(UIModel.DayModel(DayHeader(map.key)))
-                    map.value.forEach { extreme ->
-                        uiModels.add(UIModel.TideModel(extreme))
-                    }
-                }
-                listAdapter.updateData(uiModels)
-
+                listAdapter.updateData(list)
             }
-
         })
     }
 
@@ -84,7 +66,7 @@ class TidesFragment : BaseFragment() {
         viewModel.getTidesWithLocation(viewModel.userLocation.value!!)
             .observe(viewLifecycleOwner, Observer {
                 if (!it.data.isNullOrEmpty()) {
-                    viewModel.tidesLiveData.value = it.data
+                    viewModel.sortedTidesLiveData.value = viewModel.sortTides(it.data)
                     Log.d(TAG, "getAndObserveTides: tides observed")
                 }
             })
@@ -98,7 +80,7 @@ class TidesFragment : BaseFragment() {
     override fun onDestroyView() {
         super.onDestroyView()
         _binding = null
-    }
 
+    }
 
 }

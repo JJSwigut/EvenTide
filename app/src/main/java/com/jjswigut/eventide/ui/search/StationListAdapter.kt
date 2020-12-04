@@ -10,11 +10,13 @@ import com.jjswigut.eventide.data.entities.TidalStation
 import com.jjswigut.eventide.databinding.ItemStationBinding
 import com.jjswigut.eventide.ui.StationAction
 import com.jjswigut.eventide.utils.ListDiffCallback
+import com.jjswigut.eventide.utils.Preferences
 
 
 class StationListAdapter(
     private val actionHandler: StationActionHandler,
-    private val userLocation: Location
+    private val userLocation: Location,
+    private val prefs: Preferences
 ) :
     RecyclerView.Adapter<StationListAdapter.ViewHolder>() {
 
@@ -29,7 +31,8 @@ class StationListAdapter(
                 false
             ),
             actionHandler = actionHandler,
-            elements = elements
+            elements = elements,
+            prefs = prefs
         )
     }
 
@@ -55,7 +58,8 @@ class StationListAdapter(
     inner class ViewHolder(
         private val binding: ItemStationBinding,
         private val actionHandler: StationActionHandler,
-        private val elements: List<TidalStation>
+        private val elements: List<TidalStation>,
+        private val prefs: Preferences
     ) : RecyclerView.ViewHolder(binding.root) {
 
         private val nameView: TextView = binding.stationNameView
@@ -79,7 +83,10 @@ class StationListAdapter(
             val distance = userLocation
                 .distanceTo(stationLocation).div(1000)
                 .toString().take(4)
-            return ("$distance km ")
+            return if (prefs.units) {
+                val distanceInMiles = (distance.toDouble() * 0.6214)
+                String.format("%.2f mi", distanceInMiles)
+            } else ("$distance km")
         }
     }
 
