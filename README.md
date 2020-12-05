@@ -1,4 +1,9 @@
-# Eventide
+
+
+
+<p align = "center">
+  <img src = "etlogobanner.png" >
+  </p>
 
 <p align = "center">
   <a href="#motivation">Motivation</a> -
@@ -23,3 +28,8 @@
   
   
   # Build
+  
+  
+  
+  
+  # Gifs
