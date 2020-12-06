@@ -9,7 +9,7 @@ import javax.inject.Singleton
 
 @Singleton
 class Preferences @Inject constructor(@ApplicationContext context: Context) {
-    val prefs: SharedPreferences = PreferenceManager.getDefaultSharedPreferences(context)
+    private val prefs: SharedPreferences = PreferenceManager.getDefaultSharedPreferences(context)
     val units: Boolean
         get() = prefs.getBoolean("units", false)
 }

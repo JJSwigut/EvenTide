@@ -2,7 +2,6 @@ package com.jjswigut.eventide.ui.tides
 
 
 import android.content.ContentValues.TAG
-import android.location.Location
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
@@ -13,7 +12,7 @@ import androidx.lifecycle.Observer
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.jjswigut.eventide.databinding.FragmentTidesBinding
 import com.jjswigut.eventide.ui.BaseFragment
-import com.jjswigut.eventide.ui.search.SearchFragmentViewModel
+import com.jjswigut.eventide.ui.SharedViewModel
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
@@ -24,7 +23,7 @@ class TidesFragment : BaseFragment() {
     private lateinit var listAdapter: TidesListAdapter
 
 
-    private val viewModel: SearchFragmentViewModel by activityViewModels()
+    private val viewModel: SharedViewModel by activityViewModels()
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -53,7 +52,7 @@ class TidesFragment : BaseFragment() {
 
     private fun setupObservers() {
         viewModel.userLocation.observe(viewLifecycleOwner, Observer {
-            if (it != null) getAndObserveTides(it)
+            if (it != null) getAndObserveTides()
         })
         viewModel.sortedTidesLiveData.observe(viewLifecycleOwner, Observer { list ->
             if (!list.isNullOrEmpty()) {
@@ -62,7 +61,7 @@ class TidesFragment : BaseFragment() {
         })
     }
 
-    private fun getAndObserveTides(it: Location) {
+    private fun getAndObserveTides() {
         viewModel.getTidesWithLocation(viewModel.userLocation.value!!)
             .observe(viewLifecycleOwner, Observer {
                 if (!it.data.isNullOrEmpty()) {

@@ -9,14 +9,14 @@ import com.jjswigut.eventide.R
 import com.jjswigut.eventide.data.entities.UIModel
 import com.jjswigut.eventide.databinding.DayHeaderBinding
 import com.jjswigut.eventide.databinding.ItemTideBinding
-import com.jjswigut.eventide.ui.search.SearchFragmentViewModel
+import com.jjswigut.eventide.ui.SharedViewModel
 import com.jjswigut.eventide.utils.ListDiffCallback
 import com.jjswigut.eventide.utils.Preferences
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
 
 
-class TidesListAdapter(private val viewModel: SearchFragmentViewModel) :
+class TidesListAdapter(private val viewModel: SharedViewModel) :
     RecyclerView.Adapter<RecyclerView.ViewHolder>() {
 
     private var elements: ArrayList<UIModel> = ArrayList()
@@ -74,7 +74,7 @@ class TidesListAdapter(private val viewModel: SearchFragmentViewModel) :
     }
 
     inner class TideViewHolder(
-        private val binding: ItemTideBinding,
+        binding: ItemTideBinding,
         private val prefs: Preferences
     ) : RecyclerView.ViewHolder(binding.root) {
 
@@ -95,8 +95,8 @@ class TidesListAdapter(private val viewModel: SearchFragmentViewModel) :
             val fullDate = date.take(16)
             val time = fullDate.takeLast(5)
             var hour = time.take(2).toInt()
-            var timeStamp = ""
-            var timeString = ""
+            var timeStamp: String
+            val timeString: String
 
             timeStamp = if (hour >= 12) {
                 " pm"
@@ -125,7 +125,7 @@ class TidesListAdapter(private val viewModel: SearchFragmentViewModel) :
 
 
     inner class DayViewHolder(
-        private val binding: DayHeaderBinding
+        binding: DayHeaderBinding
     ) : RecyclerView.ViewHolder(binding.root) {
 
         private val dayView: TextView = binding.dayHeader

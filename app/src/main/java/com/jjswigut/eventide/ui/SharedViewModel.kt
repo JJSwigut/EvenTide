@@ -1,4 +1,4 @@
-package com.jjswigut.eventide.ui.search
+package com.jjswigut.eventide.ui
 
 import android.location.Location
 import androidx.hilt.lifecycle.ViewModelInject
@@ -14,16 +14,15 @@ import com.jjswigut.eventide.utils.Preferences
 import com.jjswigut.eventide.utils.Resource
 
 
-class SearchFragmentViewModel @ViewModelInject constructor(
+class SharedViewModel @ViewModelInject constructor(
     private val repo: Repository,
-    private val prefs: Preferences
+    prefs: Preferences
 ) : ViewModel() {
 
     private var mockLocation = Location("")
 
     val userLocation = MutableLiveData<Location>()
     val stationLiveData = MutableLiveData<List<TidalStation>>()
-    val tidesLiveData = MutableLiveData<List<Extreme>>()
     val sortedTidesLiveData = MutableLiveData<ArrayList<UIModel>>()
     val preferences = prefs
 
