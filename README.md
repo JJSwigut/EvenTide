@@ -5,7 +5,6 @@
 <p align = "center">
   <a href="#description">Description</a> -
   <a href="#tech">Tech</a> -
-  <a href="#build">Build</a> -
   <a href="#screenshots">Screenshots</a> -
   <a href="#license">License</a>
   </p>
@@ -21,7 +20,7 @@
   fetches information from the
   [WorldTides API](https://www.worldtides.info/apidocs) and then relies
   on [NOAA](https://tidesandcurrents.noaa.gov/) for realtime and
-  forcasted tidal based on station location.
+  forcasted tidal data based on station location.
 
 # Tech
 <h5>Material Design</h5> For predictable, well-designed and
@@ -42,11 +41,6 @@ reducing the need for callbacks.
 <h5>Navigation Component</h5> Used to handle navigation and the passing of data between destinations
 <h5>Android KTX</h5> Helping to write more concise and idiomatic Kotlin code.
 <h5>Preferences</h5> Used to create interactive settings screens.
-
-
-# Build
-
-
 
 
 # Screenshots
