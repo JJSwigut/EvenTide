@@ -13,15 +13,17 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.browser.customtabs.CustomTabsIntent
 import androidx.core.app.ActivityCompat
+import androidx.core.content.ContextCompat
 import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.Observer
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.location.LocationServices
+import com.jjswigut.eventide.R
 import com.jjswigut.eventide.databinding.FragmentSearchBinding
 import com.jjswigut.eventide.ui.BaseFragment
-import com.jjswigut.eventide.ui.StationAction
-import com.jjswigut.eventide.ui.StationAction.StationClicked
+import com.jjswigut.eventide.ui.SharedViewModel
+import com.jjswigut.eventide.ui.search.StationAction.StationClicked
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
@@ -34,7 +36,7 @@ class SearchFragment : BaseFragment() {
 
     private lateinit var listAdapter: StationListAdapter
 
-    private val viewModel: SearchFragmentViewModel by activityViewModels()
+    private val viewModel: SharedViewModel by activityViewModels()
 
     private lateinit var fusedLocationClient: FusedLocationProviderClient
 
@@ -42,7 +44,11 @@ class SearchFragment : BaseFragment() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         fusedLocationClient = LocationServices.getFusedLocationProviderClient(requireActivity())
-        listAdapter = StationListAdapter(::handleAction)
+        listAdapter = StationListAdapter(
+            ::handleAction,
+            viewModel.userLocation.value!!,
+            viewModel.preferences
+        )
         getLastLocation()
 
 
@@ -55,13 +61,11 @@ class SearchFragment : BaseFragment() {
     ): View {
         _binding = FragmentSearchBinding.inflate(inflater, container, false)
         val view = binding.root
-
         return view
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-
         setupRecyclerView()
         Log.d(TAG, "onViewCreated: RecyclerView Set up")
     }
@@ -91,16 +95,14 @@ class SearchFragment : BaseFragment() {
         viewModel.userLocation.observe(viewLifecycleOwner, Observer {
             if (it != null) getAndObserveStations(it)
         })
-        viewModel.stationLiveData.observe(viewLifecycleOwner, Observer {
-            if (!it.isNullOrEmpty()) listAdapter.updateData(ArrayList(it))
-        })
     }
 
     private fun getAndObserveStations(it: Location) {
-        viewModel.getStationsWithLocation(viewModel.userLocation.value!!)
+        viewModel.getStationsWithLocation(it)
             .observe(viewLifecycleOwner, Observer {
                 if (!it.data.isNullOrEmpty())
                     listAdapter.updateData(ArrayList(it.data))
+                viewModel.stationLiveData.value = it.data
             })
     }
 
@@ -132,8 +134,6 @@ class SearchFragment : BaseFragment() {
         }
         fusedLocationClient.lastLocation.addOnSuccessListener { location: Location? ->
             if (location != null) {
-                viewModel.userLocation.value = location
-
                 Log.d(TAG, "getLastLocation: got location")
             }
 
@@ -142,6 +142,14 @@ class SearchFragment : BaseFragment() {
 
     private fun launchCustomTab(url: String) {
         val builder = CustomTabsIntent.Builder()
+
+        builder.setToolbarColor(ContextCompat.getColor(requireContext(), R.color.primaryLightColor))
+        builder.setNavigationBarColor(
+            ContextCompat.getColor(
+                requireContext(),
+                R.color.primaryDarkColor
+            )
+        )
         val customTabsIntent = builder.build()
         customTabsIntent.launchUrl(requireContext(), Uri.parse(url))
     }

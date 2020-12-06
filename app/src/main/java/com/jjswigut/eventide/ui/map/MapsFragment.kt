@@ -2,13 +2,13 @@ package com.jjswigut.eventide.ui.map
 
 import android.Manifest
 import android.Manifest.permission.ACCESS_COARSE_LOCATION
-import android.content.ContentValues.TAG
 import android.content.pm.PackageManager
+import android.net.Uri
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.browser.customtabs.CustomTabsIntent
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.activityViewModels
@@ -17,32 +17,56 @@ import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.GoogleMap
 import com.google.android.gms.maps.OnMapReadyCallback
 import com.google.android.gms.maps.SupportMapFragment
+import com.google.android.gms.maps.model.BitmapDescriptorFactory
 import com.google.android.gms.maps.model.LatLng
 import com.google.android.gms.maps.model.MarkerOptions
 import com.jjswigut.eventide.R
+import com.jjswigut.eventide.data.entities.TidalStation
 import com.jjswigut.eventide.ui.BaseFragment
-import com.jjswigut.eventide.ui.search.SearchFragmentViewModel
+import com.jjswigut.eventide.ui.SharedViewModel
 import dagger.hilt.android.AndroidEntryPoint
+
 
 @AndroidEntryPoint
 class MapsFragment : BaseFragment() {
 
     private val REQUEST_LOCATION_PERMISSION = 1
     private lateinit var map: GoogleMap
-    private val viewModel: SearchFragmentViewModel by activityViewModels()
+    private val viewModel: SharedViewModel by activityViewModels()
+    private var stationList = arrayListOf<TidalStation>()
 
 
     private val callback = OnMapReadyCallback { googleMap ->
         map = googleMap
         val zoom = 10f
         val loc = viewModel.userLocation.value
-        if (loc != null) {
-            val location = LatLng(loc.latitude, loc.longitude)
-            googleMap.addMarker(MarkerOptions().position(location).title("You are here!"))
-            googleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(location, zoom))
-            enableMyLocation()
+
+        val location = LatLng(loc!!.latitude, loc.longitude)
+        val youAreHere = googleMap.addMarker(
+            MarkerOptions().position(location).title("You are here!")
+                .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_CYAN))
+        )
+        youAreHere.showInfoWindow()
+
+        stationList.forEach { station ->
+            googleMap.addMarker(
+                MarkerOptions()
+                    .position(LatLng(station.lat, station.lon))
+                    .title(station.name)
+            ).tag = station.id
+
         }
+
+        googleMap.setOnInfoWindowClickListener { marker ->
+            val stationId = marker.tag.toString().filter { it.isDigit() }
+            val url = "https://www.tidesandcurrents.noaa.gov/stationhome.html?id=$stationId"
+            launchCustomTab(url)
+        }
+
+        googleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(location, zoom))
+        enableMyLocation()
     }
+
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -56,10 +80,14 @@ class MapsFragment : BaseFragment() {
 
     override fun onResume() {
         super.onResume()
-        viewModel.userLocation.observe(this) {
-            updateMap()
+        viewModel.stationLiveData.observe(this) { list ->
+            if (!list.isNullOrEmpty()) {
+                observeStationsforMarkers(list)
+                updateMap()
+            }
         }
-        Log.d(TAG, "onResume: update map ${viewModel.userLocation.value}")
+
+
     }
 
 
@@ -77,7 +105,7 @@ class MapsFragment : BaseFragment() {
                     Manifest.permission.ACCESS_FINE_LOCATION
                 ) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(
                     requireContext(),
-                    Manifest.permission.ACCESS_COARSE_LOCATION
+                    ACCESS_COARSE_LOCATION
                 ) != PackageManager.PERMISSION_GRANTED
             ) {
 
@@ -87,16 +115,34 @@ class MapsFragment : BaseFragment() {
         } else {
             ActivityCompat.requestPermissions(
                 requireActivity(),
-                arrayOf<String>(Manifest.permission.ACCESS_FINE_LOCATION, ACCESS_COARSE_LOCATION),
+                arrayOf(Manifest.permission.ACCESS_FINE_LOCATION, ACCESS_COARSE_LOCATION),
                 REQUEST_LOCATION_PERMISSION
             )
 
         }
     }
 
+    private fun observeStationsforMarkers(list: List<TidalStation>) {
+        list.forEach { station -> stationList.add(station) }
+
+    }
 
     private fun updateMap() {
         val mapFragment = childFragmentManager.findFragmentById(R.id.map) as SupportMapFragment?
         mapFragment?.getMapAsync(callback)
     }
+
+    private fun launchCustomTab(url: String) {
+        val builder = CustomTabsIntent.Builder()
+        builder.setToolbarColor(ContextCompat.getColor(requireContext(), R.color.primaryLightColor))
+        builder.setNavigationBarColor(
+            ContextCompat.getColor(
+                requireContext(),
+                R.color.primaryDarkColor
+            )
+        )
+        val customTabsIntent = builder.build()
+        customTabsIntent.launchUrl(requireContext(), Uri.parse(url))
+    }
+
 }

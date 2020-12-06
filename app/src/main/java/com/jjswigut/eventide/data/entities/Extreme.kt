@@ -5,20 +5,13 @@ import androidx.room.Entity
 import androidx.room.PrimaryKey
 
 @Entity(tableName = "tide_table")
-data class Tide(
+data class Extreme(
     @PrimaryKey
-    var dt:Long,
+    val date: String,
     @ColumnInfo
-    var date:String,
+    val dt: Int,
     @ColumnInfo
-    var height:Double,
+    val height: Double,
     @ColumnInfo
-    var type:String
-){
-
-
-}
-//"dt":1603067148,
-//"date":"2020-10-19T00:25+0000",
-//"height":-1.013,
-//"type":"Low"
+    val type: String
+)

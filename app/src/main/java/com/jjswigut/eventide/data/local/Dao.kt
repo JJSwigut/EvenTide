@@ -5,8 +5,8 @@ import androidx.room.Dao
 import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
+import com.jjswigut.eventide.data.entities.Extreme
 import com.jjswigut.eventide.data.entities.TidalStation
-import com.jjswigut.eventide.data.entities.Tide
 
 @Dao
 interface Dao {
@@ -15,13 +15,13 @@ interface Dao {
     fun getStations(): LiveData<List<TidalStation>>
 
     @Query("SELECT * FROM tide_table")
-    fun getTides(): LiveData<List<Tide>>
+    fun getTides(): LiveData<List<Extreme>>
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insertStations(stations: List<TidalStation>)
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    suspend fun insertTides(tides: List<Tide>)
+    suspend fun insertTides(tides: List<Extreme>)
 
 
 }
