@@ -50,12 +50,14 @@ reducing the need for callbacks.
 
 
 # Screenshots
-<img src = "etlocationscreen.png" >
-<img src = "etstationlist.png" >
-<img src = "etmap.png" >
-<img src = "ettideslist.png" >
-<img src = "etsettingsscreen.png" >
-<img src = "etcustomtab.png" >
+<p align = "center">
+<img src = "etlocationscreen.png" height = "400" width = "200" >
+<img src = "etstationlist.png" height = "400" width = "200" >
+<img src = "etmap.png" height = "400" width = "200" >
+<img src = "ettideslist.png" height = "400" width = "200" >
+<img src = "etsettingsscreen.png" height = "400" width = "200" >
+<img src = "etcustomtab.png" height = "400" width = "200" >
+  </p>
 
 
 
