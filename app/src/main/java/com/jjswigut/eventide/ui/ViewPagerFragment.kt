@@ -5,7 +5,9 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.appcompat.app.AppCompatDelegate
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.activityViewModels
 import androidx.viewpager.widget.ViewPager
 import com.google.android.material.tabs.TabLayout
 import com.jjswigut.eventide.databinding.FragmentViewpagerBinding
@@ -13,6 +15,7 @@ import com.jjswigut.eventide.databinding.FragmentViewpagerBinding
 
 class ViewPagerFragment : Fragment() {
 
+    private val viewModel: SharedViewModel by activityViewModels()
     private var _binding: FragmentViewpagerBinding? = null
     private val binding get() = _binding!!
     override fun onCreateView(
@@ -30,8 +33,20 @@ class ViewPagerFragment : Fragment() {
         tabs.getTabAt(0)?.setIcon(com.jjswigut.eventide.R.drawable.ic_search)
         tabs.getTabAt(1)?.setIcon(com.jjswigut.eventide.R.drawable.ic_map)
         tabs.getTabAt(2)?.setIcon(com.jjswigut.eventide.R.drawable.ic_tides)
+
         return view
 
     }
 
+    override fun onResume() {
+        super.onResume()
+        setTheme()
+    }
+
+    private fun setTheme() {
+        if (viewModel.preferences.darkMode)
+            AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES)
+        else AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO)
+
+    }
 }

@@ -7,5 +7,10 @@
         app:summaryOn="@string/attachment_summary_on"
         app:title="Units of Measure" />
 
+    <SwitchPreferenceCompat
+        app:key="darkmode"
+        app:summaryOff=""
+        app:summaryOn=""
+        app:title="Dark Mode" />
 
 </PreferenceScreen>
