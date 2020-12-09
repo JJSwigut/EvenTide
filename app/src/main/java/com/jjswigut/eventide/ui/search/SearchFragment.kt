@@ -44,14 +44,14 @@ class SearchFragment : BaseFragment() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         fusedLocationClient = LocationServices.getFusedLocationProviderClient(requireActivity())
-        listAdapter = StationListAdapter(
-            ::handleAction,
-            viewModel.userLocation.value!!,
-            viewModel.preferences
-        )
         getLastLocation()
-
-
+        Log.d(TAG, "onCreate: getting location")
+        if (getLastLocation()) {
+            listAdapter = StationListAdapter(
+                ::handleAction,
+                viewModel.preferences
+            )
+        }
     }
 
     override fun onCreateView(
@@ -60,8 +60,7 @@ class SearchFragment : BaseFragment() {
         savedInstanceState: Bundle?
     ): View {
         _binding = FragmentSearchBinding.inflate(inflater, container, false)
-        val view = binding.root
-        return view
+        return binding.root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -74,7 +73,6 @@ class SearchFragment : BaseFragment() {
     override fun onResume() {
         super.onResume()
         setupObservers()
-
     }
 
 
@@ -113,7 +111,7 @@ class SearchFragment : BaseFragment() {
 
 
     //TODO: After getting permission the app needs to try this function again. It currently doesn't.
-    private fun getLastLocation() {
+    private fun getLastLocation(): Boolean {
         if (ActivityCompat.checkSelfPermission(
                 requireContext(),
                 Manifest.permission.ACCESS_FINE_LOCATION
@@ -124,7 +122,7 @@ class SearchFragment : BaseFragment() {
         ) {
             ActivityCompat.requestPermissions(
                 requireActivity(),
-                arrayOf<String>(
+                arrayOf(
                     Manifest.permission.ACCESS_FINE_LOCATION,
                     Manifest.permission.ACCESS_COARSE_LOCATION
                 ),
@@ -134,10 +132,12 @@ class SearchFragment : BaseFragment() {
         }
         fusedLocationClient.lastLocation.addOnSuccessListener { location: Location? ->
             if (location != null) {
+                viewModel.userLocation.value = location
+                viewModel.preferences.saveLocation(location)
                 Log.d(TAG, "getLastLocation: got location")
             }
-
         }
+        return true
     }
 
     private fun launchCustomTab(url: String) {

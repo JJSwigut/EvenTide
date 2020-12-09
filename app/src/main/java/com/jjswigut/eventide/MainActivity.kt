@@ -36,6 +36,7 @@ class MainActivity : AppCompatActivity() {
         return when (item.itemId) {
             R.id.settings -> {
                 navigate(ViewPagerFragmentDirections.actionViewPagerFragmentToSettingsFragment())
+
                 true
             }
             R.id.help -> {

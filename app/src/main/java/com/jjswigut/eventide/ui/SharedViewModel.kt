@@ -19,19 +19,19 @@ class SharedViewModel @ViewModelInject constructor(
     prefs: Preferences
 ) : ViewModel() {
 
-    private var mockLocation = Location("")
+//    private var mockLocation = Location("")
 
     val userLocation = MutableLiveData<Location>()
     val stationLiveData = MutableLiveData<List<TidalStation>>()
     val sortedTidesLiveData = MutableLiveData<ArrayList<UIModel>>()
     val preferences = prefs
 
-    init {
-        mockLocation.latitude = 41.3543
-        mockLocation.longitude = -71.9665
-        userLocation.value = mockLocation
-
-    }
+//    init {
+//        mockLocation.latitude = 41.3543
+//        mockLocation.longitude = -71.9665
+//        //userLocation.value = mockLocation
+//
+//    }
 
 
     fun getStationsWithLocation(location: Location): LiveData<Resource<List<TidalStation>>> {

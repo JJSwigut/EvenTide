@@ -6,6 +6,7 @@ import android.view.ViewGroup
 import android.widget.TextView
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
+import com.google.android.gms.maps.model.LatLng
 import com.jjswigut.eventide.data.entities.TidalStation
 import com.jjswigut.eventide.databinding.ItemStationBinding
 import com.jjswigut.eventide.utils.ListDiffCallback
@@ -14,7 +15,6 @@ import com.jjswigut.eventide.utils.Preferences
 
 class StationListAdapter(
     private val actionHandler: StationActionHandler,
-    private val userLocation: Location,
     private val prefs: Preferences
 ) :
     RecyclerView.Adapter<StationListAdapter.ViewHolder>() {
@@ -67,9 +67,10 @@ class StationListAdapter(
 
 
         fun bind(item: TidalStation) {
-
             nameView.text = element().name
-            distanceView.text = distance()
+            if (prefs.userLocation != LatLng(0.0, 0.0)) {
+                distanceView.text = distance()
+            } else distanceView.text = "..."
             binding.stationView.setOnClickListener {
                 actionHandler(StationAction.StationClicked(position, item))
             }
@@ -79,6 +80,9 @@ class StationListAdapter(
             val stationLocation = Location("")
             stationLocation.latitude = element().lat
             stationLocation.longitude = element().lon
+            val userLocation = Location("")
+            userLocation.latitude = prefs.userLocation.latitude
+            userLocation.longitude = prefs.userLocation.longitude
             val distance = userLocation
                 .distanceTo(stationLocation).div(1000)
                 .toString().take(4)
@@ -88,8 +92,6 @@ class StationListAdapter(
             } else ("$distance km")
         }
     }
-
-
 }
 
 typealias StationActionHandler = (StationAction.StationClicked) -> Unit

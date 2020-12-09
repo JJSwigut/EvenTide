@@ -15,6 +15,7 @@ import com.jjswigut.eventide.databinding.FragmentViewpagerBinding
 
 class ViewPagerFragment : Fragment() {
 
+
     private val viewModel: SharedViewModel by activityViewModels()
     private var _binding: FragmentViewpagerBinding? = null
     private val binding get() = _binding!!
@@ -41,6 +42,7 @@ class ViewPagerFragment : Fragment() {
     override fun onResume() {
         super.onResume()
         setTheme()
+
     }
 
     private fun setTheme() {
@@ -48,5 +50,10 @@ class ViewPagerFragment : Fragment() {
             AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES)
         else AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO)
 
+    }
+
+    override fun onDestroyView() {
+        super.onDestroyView()
+        _binding = null
     }
 }
