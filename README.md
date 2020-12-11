@@ -5,7 +5,6 @@
 <p align = "center">
   <a href="#description">Description</a> -
   <a href="#tech">Tech</a> -
-  <a href="#build">Build</a> -
   <a href="#screenshots">Screenshots</a> -
   <a href="#license">License</a>
   </p>
@@ -21,7 +20,7 @@
   fetches information from the
   [WorldTides API](https://www.worldtides.info/apidocs) and then relies
   on [NOAA](https://tidesandcurrents.noaa.gov/) for realtime and
-  forcasted tidal based on station location.
+  forcasted tidal data based on station location.
 
 # Tech
 <h5>Material Design</h5> For predictable, well-designed and
@@ -44,18 +43,15 @@ reducing the need for callbacks.
 <h5>Preferences</h5> Used to create interactive settings screens.
 
 
-# Build
-
-
-
-
 # Screenshots
-<img src = "etlocationscreen.png" >
-<img src = "etstationlist.png" >
-<img src = "etmap.png" >
-<img src = "ettideslist.png" >
-<img src = "etsettingsscreen.png" >
-<img src = "etcustomtab.png" >
+<p align = "center">
+<img src = "etlocationscreen.png" height = "400" width = "200" >
+<img src = "etstationlist.png" height = "400" width = "200" >
+<img src = "etmap.png" height = "400" width = "200" >
+<img src = "ettideslist.png" height = "400" width = "200" >
+<img src = "etsettingsscreen.png" height = "400" width = "200" >
+<img src = "etcustomtab.png" height = "400" width = "200" >
+  </p>
 
 
 
