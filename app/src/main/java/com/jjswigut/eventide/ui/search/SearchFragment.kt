@@ -2,6 +2,7 @@ package com.jjswigut.eventide.ui.search
 
 
 import android.Manifest
+import android.annotation.SuppressLint
 import android.content.ContentValues.TAG
 import android.content.pm.PackageManager
 import android.location.Location
@@ -11,14 +12,14 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Toast
 import androidx.browser.customtabs.CustomTabsIntent
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.Observer
 import androidx.recyclerview.widget.LinearLayoutManager
-import com.google.android.gms.location.FusedLocationProviderClient
-import com.google.android.gms.location.LocationServices
+import com.google.android.gms.location.*
 import com.jjswigut.eventide.R
 import com.jjswigut.eventide.databinding.FragmentSearchBinding
 import com.jjswigut.eventide.ui.BaseFragment
@@ -45,13 +46,11 @@ class SearchFragment : BaseFragment() {
         super.onCreate(savedInstanceState)
         fusedLocationClient = LocationServices.getFusedLocationProviderClient(requireActivity())
         getLastLocation()
-        Log.d(TAG, "onCreate: getting location")
-        if (getLastLocation()) {
-            listAdapter = StationListAdapter(
-                ::handleAction,
-                viewModel.preferences
-            )
-        }
+        listAdapter = StationListAdapter(
+            ::handleAction,
+            viewModel.preferences
+        )
+
     }
 
     override fun onCreateView(
@@ -109,9 +108,40 @@ class SearchFragment : BaseFragment() {
         binding.recyclerView.adapter = listAdapter
     }
 
+    override fun onRequestPermissionsResult(
+        requestCode: Int,
+        permissions: Array<String>,
+        grantResults: IntArray
+    ) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults)
+        when (requestCode) {
+            REQUEST_LOCATION_PERMISSION -> {
+                if ((grantResults.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED)) {
+                    getLastLocation()
+                } else {
+                    Toast.makeText(
+                        requireContext(),
+                        getString(R.string.no_location_explanation),
+                        Toast.LENGTH_SHORT
+                    ).show()
+                }
+                return
+            }
 
-    //TODO: After getting permission the app needs to try this function again. It currently doesn't.
-    private fun getLastLocation(): Boolean {
+        }
+    }
+
+    private fun requestLocationPermission() {
+        requestPermissions(
+            arrayOf(
+                Manifest.permission.ACCESS_FINE_LOCATION,
+                Manifest.permission.ACCESS_COARSE_LOCATION
+            ),
+            REQUEST_LOCATION_PERMISSION
+        )
+    }
+
+    private fun getLocationPermission(): Boolean {
         if (ActivityCompat.checkSelfPermission(
                 requireContext(),
                 Manifest.permission.ACCESS_FINE_LOCATION
@@ -120,24 +150,49 @@ class SearchFragment : BaseFragment() {
                 Manifest.permission.ACCESS_COARSE_LOCATION
             ) != PackageManager.PERMISSION_GRANTED
         ) {
-            ActivityCompat.requestPermissions(
-                requireActivity(),
-                arrayOf(
-                    Manifest.permission.ACCESS_FINE_LOCATION,
-                    Manifest.permission.ACCESS_COARSE_LOCATION
-                ),
-                REQUEST_LOCATION_PERMISSION
-            )
-
-        }
-        fusedLocationClient.lastLocation.addOnSuccessListener { location: Location? ->
-            if (location != null) {
-                viewModel.userLocation.value = location
-                viewModel.preferences.saveLocation(location)
-                Log.d(TAG, "getLastLocation: got location")
-            }
+            return false
         }
         return true
+    }
+
+
+    @SuppressLint("MissingPermission")
+    private fun getLastLocation() {
+        if (getLocationPermission()) {
+            fusedLocationClient.lastLocation.addOnSuccessListener { location: Location? ->
+                if (location != null) {
+                    viewModel.userLocation.value = location
+                    viewModel.preferences.saveLocation(location)
+                } else {
+                    requestCurrentLocation()
+                }
+            }
+        } else requestLocationPermission()
+    }
+
+    @SuppressLint("MissingPermission")
+    private fun requestCurrentLocation() {
+        val locationRequest = LocationRequest.create()
+        locationRequest.priority = LocationRequest.PRIORITY_HIGH_ACCURACY
+        locationRequest.interval = 20 * 1000
+        val locationCallback = object : LocationCallback() {
+            override fun onLocationResult(locationResult: LocationResult?) {
+                super.onLocationResult(locationResult)
+                if (locationResult != null && locationResult.locations.isNotEmpty()) {
+                    locationResult.locations.firstOrNull()?.let {
+                        viewModel.userLocation.value = it
+                        viewModel.preferences.saveLocation(it)
+
+                    }
+
+                } else Toast.makeText(
+                    requireContext(),
+                    getString(R.string.location_not_working),
+                    Toast.LENGTH_SHORT
+                ).show()
+            }
+        }
+        fusedLocationClient.removeLocationUpdates(locationCallback)
     }
 
     private fun launchCustomTab(url: String) {

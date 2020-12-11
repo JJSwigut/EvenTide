@@ -2,14 +2,13 @@ package com.jjswigut.eventide.ui
 
 
 import android.os.Bundle
-import android.view.LayoutInflater
-import android.view.View
-import android.view.ViewGroup
+import android.view.*
 import androidx.appcompat.app.AppCompatDelegate
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.viewpager.widget.ViewPager
 import com.google.android.material.tabs.TabLayout
+import com.jjswigut.eventide.R
 import com.jjswigut.eventide.databinding.FragmentViewpagerBinding
 
 
@@ -36,6 +35,12 @@ class ViewPagerFragment : Fragment() {
         tabs.getTabAt(2)?.setIcon(com.jjswigut.eventide.R.drawable.ic_tides)
 
         return view
+
+    }
+
+    override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
+        super.onCreateOptionsMenu(menu, inflater)
+        inflater.inflate(R.menu.options_menu, menu)
 
     }
 

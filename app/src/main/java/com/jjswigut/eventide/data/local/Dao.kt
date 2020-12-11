@@ -23,5 +23,11 @@ interface Dao {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insertTides(tides: List<Extreme>)
 
+    @Query("DELETE FROM station_table")
+    suspend fun deleteStations()
+
+    @Query("DELETE FROM tide_table")
+    suspend fun deleteTides()
+
 
 }

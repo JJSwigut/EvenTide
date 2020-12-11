@@ -1,8 +1,10 @@
 package com.jjswigut.eventide.utils
 
+import android.content.ContentValues.TAG
 import android.content.Context
 import android.content.SharedPreferences
 import android.location.Location
+import android.util.Log
 import androidx.core.content.edit
 import androidx.preference.PreferenceManager
 import com.google.android.gms.maps.model.LatLng
@@ -22,6 +24,7 @@ class Preferences @Inject constructor(@ApplicationContext context: Context) {
         prefs.edit {
             putFloat("lat", location.latitude.toFloat())
             putFloat("lon", location.longitude.toFloat())
+            Log.d(TAG, "saveLocation: $location")
         }
     }
 

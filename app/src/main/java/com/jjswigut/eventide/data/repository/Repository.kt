@@ -16,6 +16,7 @@ class Repository @Inject constructor(
         databaseQuery = { localDataSource.getTides() },
         networkCall = { remoteDataSource.getTides(lat, lon) },
         saveCallResult = {
+            localDataSource.deleteTides()
             localDataSource.insertTides(it.extremes)
         }
     )
@@ -23,7 +24,10 @@ class Repository @Inject constructor(
     fun getStations(lat: Double, lon: Double) = performGetOperation(
         databaseQuery = { localDataSource.getStations() },
         networkCall = { remoteDataSource.getStations(lat, lon) },
-        saveCallResult = { localDataSource.insertStations(it.stations) }
+        saveCallResult = {
+            localDataSource.deleteStations()
+            localDataSource.insertStations(it.stations)
+        }
     )
 
 
