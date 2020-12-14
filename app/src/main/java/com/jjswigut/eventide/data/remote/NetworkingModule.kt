@@ -1,8 +1,7 @@
-package com.jjswigut.eventide.di
+package com.jjswigut.eventide.data.remote
 
 import com.google.gson.Gson
 import com.google.gson.GsonBuilder
-import com.jjswigut.eventide.data.remote.Service
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn

@@ -6,12 +6,12 @@ import androidx.lifecycle.ViewModel
 import com.jjswigut.eventide.data.entities.DayHeader
 import com.jjswigut.eventide.data.entities.Extreme
 import com.jjswigut.eventide.data.entities.UIModel
-import com.jjswigut.eventide.data.repository.Repository
+import com.jjswigut.eventide.data.repository.TideRepository
 import com.jjswigut.eventide.utils.Preferences
 
 
 class TideViewModel @ViewModelInject constructor(
-    private val repo: Repository,
+    private val repo: TideRepository,
     val prefs: Preferences
 ) : ViewModel() {
 

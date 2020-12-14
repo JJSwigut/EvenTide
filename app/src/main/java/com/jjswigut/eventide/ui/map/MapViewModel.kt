@@ -3,12 +3,12 @@ package com.jjswigut.eventide.ui.map
 import androidx.hilt.lifecycle.ViewModelInject
 import androidx.lifecycle.ViewModel
 import com.jjswigut.eventide.data.entities.TidalStation
-import com.jjswigut.eventide.data.repository.Repository
+import com.jjswigut.eventide.data.repository.StationRepository
 import com.jjswigut.eventide.utils.Preferences
 
 
 class MapViewModel @ViewModelInject constructor(
-    private val repo: Repository,
+    private val repo: StationRepository,
     val prefs: Preferences
 ) : ViewModel() {
 

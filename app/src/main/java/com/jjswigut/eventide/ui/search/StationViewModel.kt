@@ -6,13 +6,13 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import com.jjswigut.eventide.data.entities.TidalStation
-import com.jjswigut.eventide.data.repository.Repository
+import com.jjswigut.eventide.data.repository.StationRepository
 import com.jjswigut.eventide.utils.Preferences
 import com.jjswigut.eventide.utils.Resource
 
 
 class StationViewModel @ViewModelInject constructor(
-    private val repo: Repository,
+    private val repo: StationRepository,
     prefs: Preferences
 ) : ViewModel() {
 

@@ -1,11 +1,10 @@
-package com.jjswigut.eventide.di
+package com.jjswigut.eventide.data.repository
 
 import android.content.Context
 import com.jjswigut.eventide.data.local.AppDatabase
 import com.jjswigut.eventide.data.local.Dao
 import com.jjswigut.eventide.data.remote.RemoteDataSource
 import com.jjswigut.eventide.data.remote.Service
-import com.jjswigut.eventide.data.repository.Repository
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -34,7 +33,7 @@ object RepositoryModule {
     @Provides
     fun provideRepository(remoteDataSource: RemoteDataSource,
                           localDataSource: Dao) =
-       Repository(remoteDataSource, localDataSource)
+        TideRepository(remoteDataSource, localDataSource)
 
 
 }
