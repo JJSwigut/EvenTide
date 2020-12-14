@@ -10,12 +10,13 @@ import androidx.viewpager.widget.ViewPager
 import com.google.android.material.tabs.TabLayout
 import com.jjswigut.eventide.R
 import com.jjswigut.eventide.databinding.FragmentViewpagerBinding
+import com.jjswigut.eventide.ui.search.StationViewModel
 
 
 class ViewPagerFragment : Fragment() {
 
 
-    private val viewModel: SharedViewModel by activityViewModels()
+    private val viewModel: StationViewModel by activityViewModels()
     private var _binding: FragmentViewpagerBinding? = null
     private val binding get() = _binding!!
     override fun onCreateView(

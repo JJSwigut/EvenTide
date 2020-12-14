@@ -8,7 +8,6 @@ import javax.inject.Inject
 class Repository @Inject constructor(
     private val remoteDataSource: RemoteDataSource,
     private val localDataSource: Dao
-
 ) {
 
 
@@ -29,7 +28,6 @@ class Repository @Inject constructor(
             localDataSource.insertStations(it.stations)
         }
     )
-
 
 
 }

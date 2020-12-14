@@ -12,7 +12,7 @@ import androidx.browser.customtabs.CustomTabsIntent
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.activityViewModels
-import androidx.lifecycle.observe
+import androidx.lifecycle.Observer
 import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.GoogleMap
 import com.google.android.gms.maps.OnMapReadyCallback
@@ -23,7 +23,6 @@ import com.google.android.gms.maps.model.MarkerOptions
 import com.jjswigut.eventide.R
 import com.jjswigut.eventide.data.entities.TidalStation
 import com.jjswigut.eventide.ui.BaseFragment
-import com.jjswigut.eventide.ui.SharedViewModel
 import dagger.hilt.android.AndroidEntryPoint
 
 
@@ -32,16 +31,14 @@ class MapsFragment : BaseFragment() {
 
     private val REQUEST_LOCATION_PERMISSION = 1
     private lateinit var map: GoogleMap
-    private val viewModel: SharedViewModel by activityViewModels()
+    private val viewModel: MapViewModel by activityViewModels()
     private var stationList = arrayListOf<TidalStation>()
 
 
     private val callback = OnMapReadyCallback { googleMap ->
         map = googleMap
         val zoom = 10f
-        val loc = viewModel.userLocation.value
-
-        val location = LatLng(loc!!.latitude, loc.longitude)
+        val location = viewModel.prefs.userLocation
         val youAreHere = googleMap.addMarker(
             MarkerOptions().position(location).title("You are here!")
                 .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_CYAN))
@@ -80,14 +77,18 @@ class MapsFragment : BaseFragment() {
 
     override fun onResume() {
         super.onResume()
-        viewModel.stationLiveData.observe(this) { list ->
-            if (!list.isNullOrEmpty()) {
-                observeStationsforMarkers(list)
+        getAndObserveStations()
+
+    }
+
+
+    private fun getAndObserveStations() {
+        viewModel.stationLiveData
+            .observe(viewLifecycleOwner, Observer {
+                if (!it.data.isNullOrEmpty())
+                    stationList = viewModel.buildStationList(it.data)
                 updateMap()
-            }
-        }
-
-
+            })
     }
 
 
@@ -120,11 +121,6 @@ class MapsFragment : BaseFragment() {
             )
 
         }
-    }
-
-    private fun observeStationsforMarkers(list: List<TidalStation>) {
-        list.forEach { station -> stationList.add(station) }
-
     }
 
     private fun updateMap() {

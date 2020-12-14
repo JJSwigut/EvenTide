@@ -9,14 +9,13 @@ import com.jjswigut.eventide.R
 import com.jjswigut.eventide.data.entities.UIModel
 import com.jjswigut.eventide.databinding.DayHeaderBinding
 import com.jjswigut.eventide.databinding.ItemTideBinding
-import com.jjswigut.eventide.ui.SharedViewModel
 import com.jjswigut.eventide.utils.ListDiffCallback
 import com.jjswigut.eventide.utils.Preferences
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
 
 
-class TidesListAdapter(private val viewModel: SharedViewModel) :
+class TidesListAdapter(private val viewModel: TideViewModel) :
     RecyclerView.Adapter<RecyclerView.ViewHolder>() {
 
     private var elements: ArrayList<UIModel> = ArrayList()
@@ -58,7 +57,7 @@ class TidesListAdapter(private val viewModel: SharedViewModel) :
                     ),
                     parent, false
                 ),
-                prefs = viewModel.preferences
+                prefs = viewModel.prefs
             )
             else -> throw Exception("Nope")
         }

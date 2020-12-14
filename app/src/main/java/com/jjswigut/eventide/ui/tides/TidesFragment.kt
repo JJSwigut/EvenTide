@@ -12,7 +12,6 @@ import androidx.lifecycle.Observer
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.jjswigut.eventide.databinding.FragmentTidesBinding
 import com.jjswigut.eventide.ui.BaseFragment
-import com.jjswigut.eventide.ui.SharedViewModel
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
@@ -23,7 +22,7 @@ class TidesFragment : BaseFragment() {
     private lateinit var listAdapter: TidesListAdapter
 
 
-    private val viewModel: SharedViewModel by activityViewModels()
+    private val viewModel: TideViewModel by activityViewModels()
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -47,13 +46,11 @@ class TidesFragment : BaseFragment() {
 
     override fun onResume() {
         super.onResume()
-        setupObservers()
+        observeAndSortTides()
+        observeSortedTidesAndUpdate()
     }
 
-    private fun setupObservers() {
-        viewModel.userLocation.observe(viewLifecycleOwner, Observer {
-            if (it != null) getAndObserveTides()
-        })
+    private fun observeSortedTidesAndUpdate() {
         viewModel.sortedTidesLiveData.observe(viewLifecycleOwner, Observer { list ->
             if (!list.isNullOrEmpty()) {
                 listAdapter.updateData(list)
@@ -61,8 +58,8 @@ class TidesFragment : BaseFragment() {
         })
     }
 
-    private fun getAndObserveTides() {
-        viewModel.getTidesWithLocation(viewModel.userLocation.value!!)
+    private fun observeAndSortTides() {
+        viewModel.tidesLiveData
             .observe(viewLifecycleOwner, Observer {
                 if (!it.data.isNullOrEmpty()) {
                     viewModel.sortedTidesLiveData.value = viewModel.sortTides(it.data)

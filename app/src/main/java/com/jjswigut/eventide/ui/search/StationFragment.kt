@@ -23,12 +23,11 @@ import com.google.android.gms.location.*
 import com.jjswigut.eventide.R
 import com.jjswigut.eventide.databinding.FragmentSearchBinding
 import com.jjswigut.eventide.ui.BaseFragment
-import com.jjswigut.eventide.ui.SharedViewModel
 import com.jjswigut.eventide.ui.search.StationAction.StationClicked
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
-class SearchFragment : BaseFragment() {
+class StationFragment : BaseFragment() {
 
     private val REQUEST_LOCATION_PERMISSION = 1
 
@@ -37,7 +36,7 @@ class SearchFragment : BaseFragment() {
 
     private lateinit var listAdapter: StationListAdapter
 
-    private val viewModel: SharedViewModel by activityViewModels()
+    private val viewModel: StationViewModel by activityViewModels()
 
     private lateinit var fusedLocationClient: FusedLocationProviderClient
 
@@ -94,14 +93,15 @@ class SearchFragment : BaseFragment() {
         })
     }
 
-    private fun getAndObserveStations(it: Location) {
-        viewModel.getStationsWithLocation(it)
+    private fun getAndObserveStations(location: Location) {
+        viewModel.getStationsWithLocation(location)
             .observe(viewLifecycleOwner, Observer {
                 if (!it.data.isNullOrEmpty())
                     listAdapter.updateData(ArrayList(it.data))
                 viewModel.stationLiveData.value = it.data
             })
     }
+
 
     private fun setupRecyclerView() {
         binding.recyclerView.layoutManager = LinearLayoutManager(requireContext())
@@ -161,8 +161,8 @@ class SearchFragment : BaseFragment() {
         if (getLocationPermission()) {
             fusedLocationClient.lastLocation.addOnSuccessListener { location: Location? ->
                 if (location != null) {
-                    viewModel.userLocation.value = location
                     viewModel.preferences.saveLocation(location)
+                    viewModel.userLocation.value = location
                 } else {
                     requestCurrentLocation()
                 }
@@ -180,9 +180,8 @@ class SearchFragment : BaseFragment() {
                 super.onLocationResult(locationResult)
                 if (locationResult != null && locationResult.locations.isNotEmpty()) {
                     locationResult.locations.firstOrNull()?.let {
-                        viewModel.userLocation.value = it
                         viewModel.preferences.saveLocation(it)
-
+                        viewModel.userLocation.value = it
                     }
 
                 } else Toast.makeText(
