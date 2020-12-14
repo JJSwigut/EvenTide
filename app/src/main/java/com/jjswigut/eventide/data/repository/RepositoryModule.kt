@@ -31,9 +31,19 @@ object RepositoryModule {
 
     @Singleton
     @Provides
-    fun provideRepository(remoteDataSource: RemoteDataSource,
-                          localDataSource: Dao) =
+    fun provideTideRepository(
+        remoteDataSource: RemoteDataSource,
+        localDataSource: Dao
+    ) =
         TideRepository(remoteDataSource, localDataSource)
+
+    @Singleton
+    @Provides
+    fun provideStationRepository(
+        remoteDataSource: RemoteDataSource,
+        localDataSource: Dao
+    ) =
+        StationRepository(remoteDataSource, localDataSource)
 
 
 }
