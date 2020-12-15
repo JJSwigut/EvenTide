@@ -1,5 +1,6 @@
 package com.jjswigut.eventide.data.repository
 
+import com.google.android.gms.maps.model.LatLng
 import com.jjswigut.eventide.data.local.Dao
 import com.jjswigut.eventide.data.remote.RemoteDataSource
 import com.jjswigut.eventide.utils.performGetOperation
@@ -11,9 +12,9 @@ class StationRepository @Inject constructor(
 ) {
 
 
-    fun getStations(lat: Double, lon: Double) = performGetOperation(
+    fun getStations(location: LatLng) = performGetOperation(
         databaseQuery = { localDataSource.getStations() },
-        networkCall = { remoteDataSource.getStations(lat, lon) },
+        networkCall = { remoteDataSource.getStations(location) },
         saveCallResult = {
             localDataSource.deleteStations()
             localDataSource.insertStations(it.stations)

@@ -19,8 +19,7 @@ class TideViewModel @ViewModelInject constructor(
     private val userLocation = prefs.userLocation
     val tidesLiveData
         get() = repo.getTides(
-            userLocation.latitude,
-            userLocation.longitude
+            userLocation
         )
     var sortedTidesLiveData = MutableLiveData<ArrayList<UIModel>>()
 

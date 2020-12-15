@@ -15,8 +15,7 @@ class MapViewModel @ViewModelInject constructor(
 
     val stationLiveData
         get() = repo.getStations(
-            prefs.userLocation.latitude,
-            prefs.userLocation.longitude
+            prefs.userLocation
         )
 
 

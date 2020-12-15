@@ -20,6 +20,7 @@ import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.Observer
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.google.android.gms.location.*
+import com.google.android.gms.maps.model.LatLng
 import com.jjswigut.eventide.R
 import com.jjswigut.eventide.databinding.FragmentSearchBinding
 import com.jjswigut.eventide.ui.BaseFragment
@@ -83,7 +84,6 @@ class StationFragment : BaseFragment() {
                     launchCustomTab(url)
                 }
             }
-
         }
     }
 
@@ -93,7 +93,7 @@ class StationFragment : BaseFragment() {
         })
     }
 
-    private fun getAndObserveStations(location: Location) {
+    private fun getAndObserveStations(location: LatLng) {
         viewModel.getStationsWithLocation(location)
             .observe(viewLifecycleOwner, Observer {
                 if (!it.data.isNullOrEmpty())
@@ -162,7 +162,7 @@ class StationFragment : BaseFragment() {
             fusedLocationClient.lastLocation.addOnSuccessListener { location: Location? ->
                 if (location != null) {
                     viewModel.preferences.saveLocation(location)
-                    viewModel.userLocation.value = location
+                    viewModel.userLocation.value = LatLng(location.latitude, location.longitude)
                 } else {
                     requestCurrentLocation()
                 }
@@ -181,7 +181,7 @@ class StationFragment : BaseFragment() {
                 if (locationResult != null && locationResult.locations.isNotEmpty()) {
                     locationResult.locations.firstOrNull()?.let {
                         viewModel.preferences.saveLocation(it)
-                        viewModel.userLocation.value = it
+                        viewModel.userLocation.value = LatLng(it.latitude, it.longitude)
                     }
 
                 } else Toast.makeText(
