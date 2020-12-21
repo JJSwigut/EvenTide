@@ -40,10 +40,6 @@ class MainActivity : AppCompatActivity() {
 
                 true
             }
-            R.id.help -> {
-
-                true
-            }
             else -> super.onOptionsItemSelected(item)
         }
 

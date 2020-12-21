@@ -5,7 +5,7 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentManager
 import androidx.fragment.app.FragmentPagerAdapter
 import com.jjswigut.eventide.ui.map.MapsFragment
-import com.jjswigut.eventide.ui.search.SearchFragment
+import com.jjswigut.eventide.ui.search.StationFragment
 import com.jjswigut.eventide.ui.tides.TidesFragment
 
 @Suppress("DEPRECATION")
@@ -17,7 +17,7 @@ class TabAdapter internal constructor(
     override fun getItem(position: Int): Fragment {
         return when (position) {
             0 -> {
-                SearchFragment()
+                StationFragment()
             }
             1 -> {
                 MapsFragment()
