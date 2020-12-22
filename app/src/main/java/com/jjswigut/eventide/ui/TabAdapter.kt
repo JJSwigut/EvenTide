@@ -17,10 +17,10 @@ class TabAdapter internal constructor(
     override fun getItem(position: Int): Fragment {
         return when (position) {
             0 -> {
-                StationFragment()
+                MapsFragment()
             }
             1 -> {
-                MapsFragment()
+                StationFragment()
             }
             2 -> {
                 TidesFragment()

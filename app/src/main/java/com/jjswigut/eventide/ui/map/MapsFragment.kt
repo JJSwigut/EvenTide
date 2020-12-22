@@ -3,6 +3,7 @@ package com.jjswigut.eventide.ui.map
 import android.Manifest
 import android.Manifest.permission.ACCESS_COARSE_LOCATION
 import android.content.pm.PackageManager
+import android.location.Location
 import android.net.Uri
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -37,6 +38,7 @@ class MapsFragment : BaseFragment() {
 
     private val callback = OnMapReadyCallback { googleMap ->
         map = googleMap
+        googleMap.clear()
         val zoom = 10f
         val location = viewModel.prefs.userLocation
         val youAreHere = googleMap.addMarker(
@@ -62,8 +64,12 @@ class MapsFragment : BaseFragment() {
 
         googleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(location, zoom))
         enableMyLocation()
-    }
 
+        googleMap.setOnMapClickListener {
+            createAndSaveNewLocation(it)
+            getAndObserveStations()
+        }
+    }
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -74,13 +80,11 @@ class MapsFragment : BaseFragment() {
         return inflater.inflate(R.layout.fragment_maps, container, false)
     }
 
-
     override fun onResume() {
         super.onResume()
         getAndObserveStations()
 
     }
-
 
     private fun getAndObserveStations() {
         viewModel.stationLiveData
@@ -90,7 +94,6 @@ class MapsFragment : BaseFragment() {
                 updateMap()
             })
     }
-
 
     private fun isPermissionGranted(): Boolean {
         return ContextCompat.checkSelfPermission(
@@ -109,7 +112,6 @@ class MapsFragment : BaseFragment() {
                     ACCESS_COARSE_LOCATION
                 ) != PackageManager.PERMISSION_GRANTED
             ) {
-
                 return
             }
             map.isMyLocationEnabled = true
@@ -119,8 +121,14 @@ class MapsFragment : BaseFragment() {
                 arrayOf(Manifest.permission.ACCESS_FINE_LOCATION, ACCESS_COARSE_LOCATION),
                 REQUEST_LOCATION_PERMISSION
             )
-
         }
+    }
+
+    private fun createAndSaveNewLocation(coordinates: LatLng) {
+        val location = Location("")
+        location.latitude = coordinates.latitude
+        location.longitude = coordinates.longitude
+        viewModel.prefs.saveLocation(location)
     }
 
     private fun updateMap() {

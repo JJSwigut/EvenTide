@@ -31,8 +31,8 @@ class ViewPagerFragment : Fragment() {
         viewPager.adapter = sectionsPagerAdapter
         val tabs: TabLayout = binding.tabs
         tabs.setupWithViewPager(viewPager)
-        tabs.getTabAt(0)?.setIcon(com.jjswigut.eventide.R.drawable.ic_search)
-        tabs.getTabAt(1)?.setIcon(com.jjswigut.eventide.R.drawable.ic_map)
+        tabs.getTabAt(0)?.setIcon(com.jjswigut.eventide.R.drawable.ic_map)
+        tabs.getTabAt(1)?.setIcon(com.jjswigut.eventide.R.drawable.ic_station)
         tabs.getTabAt(2)?.setIcon(com.jjswigut.eventide.R.drawable.ic_tides)
 
         return view

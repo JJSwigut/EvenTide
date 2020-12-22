@@ -14,7 +14,7 @@ import javax.inject.Singleton
 
 @Singleton
 class Preferences @Inject constructor(@ApplicationContext context: Context) {
-    private val prefs: SharedPreferences = PreferenceManager.getDefaultSharedPreferences(context)
+    val prefs: SharedPreferences = PreferenceManager.getDefaultSharedPreferences(context)
     val units: Boolean
         get() = prefs.getBoolean("units", false)
     val darkMode: Boolean

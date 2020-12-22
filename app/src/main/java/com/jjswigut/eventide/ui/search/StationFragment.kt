@@ -68,10 +68,14 @@ class StationFragment : BaseFragment() {
         Log.d(TAG, "onViewCreated: RecyclerView Set up")
     }
 
+    override fun onStart() {
+        super.onStart()
+        setupObservers()
+    }
 
     override fun onResume() {
         super.onResume()
-        setupObservers()
+        getAndObserveStations(viewModel.preferences.userLocation)
     }
 
 

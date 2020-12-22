@@ -10,6 +10,7 @@ import android.view.ViewGroup
 import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.Observer
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.google.android.gms.maps.model.LatLng
 import com.jjswigut.eventide.databinding.FragmentTidesBinding
 import com.jjswigut.eventide.ui.BaseFragment
 import dagger.hilt.android.AndroidEntryPoint
@@ -46,6 +47,7 @@ class TidesFragment : BaseFragment() {
 
     override fun onResume() {
         super.onResume()
+        getTides(viewModel.prefs.userLocation)
         observeAndSortTides()
         observeSortedTidesAndUpdate()
     }
@@ -58,11 +60,19 @@ class TidesFragment : BaseFragment() {
         })
     }
 
+    private fun getTides(location: LatLng) {
+        viewModel.getTidesWithLocation(location)
+            .observe(viewLifecycleOwner, Observer {
+                if (!it.data.isNullOrEmpty())
+                    viewModel.tidesLiveData.value = it.data
+            })
+    }
+
     private fun observeAndSortTides() {
         viewModel.tidesLiveData
             .observe(viewLifecycleOwner, Observer {
-                if (!it.data.isNullOrEmpty()) {
-                    viewModel.sortedTidesLiveData.value = viewModel.sortTides(it.data)
+                if (!it.isNullOrEmpty()) {
+                    viewModel.sortedTidesLiveData.value = viewModel.sortTides(it)
                     Log.d(TAG, "getAndObserveTides: tides observed")
                 }
             })
