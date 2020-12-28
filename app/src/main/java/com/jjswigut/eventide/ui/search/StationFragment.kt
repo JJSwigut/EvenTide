@@ -22,8 +22,9 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import com.google.android.gms.location.*
 import com.google.android.gms.maps.model.LatLng
 import com.jjswigut.eventide.R
-import com.jjswigut.eventide.databinding.FragmentSearchBinding
+import com.jjswigut.eventide.databinding.FragmentStationBinding
 import com.jjswigut.eventide.ui.BaseFragment
+import com.jjswigut.eventide.ui.map.MapViewModel
 import com.jjswigut.eventide.ui.search.StationAction.StationClicked
 import dagger.hilt.android.AndroidEntryPoint
 
@@ -32,12 +33,14 @@ class StationFragment : BaseFragment() {
 
     private val REQUEST_LOCATION_PERMISSION = 1
 
-    private var _binding: FragmentSearchBinding? = null
+    private var _binding: FragmentStationBinding? = null
     private val binding get() = _binding!!
 
     private lateinit var listAdapter: StationListAdapter
 
     private val viewModel: StationViewModel by activityViewModels()
+    private val mapViewModel: MapViewModel by activityViewModels()
+
 
     private lateinit var fusedLocationClient: FusedLocationProviderClient
 
@@ -58,7 +61,7 @@ class StationFragment : BaseFragment() {
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        _binding = FragmentSearchBinding.inflate(inflater, container, false)
+        _binding = FragmentStationBinding.inflate(inflater, container, false)
         return binding.root
     }
 
@@ -70,12 +73,7 @@ class StationFragment : BaseFragment() {
 
     override fun onStart() {
         super.onStart()
-        setupObservers()
-    }
-
-    override fun onResume() {
-        super.onResume()
-        getAndObserveStations(viewModel.preferences.userLocation)
+        getAndObserveStations()
     }
 
 
@@ -83,26 +81,31 @@ class StationFragment : BaseFragment() {
         when (action) {
             is StationClicked -> {
                 view?.let {
+//                    val station = LatLng(action.station.lat,action.station.lng)
+//                    mapViewModel.stationLatLng = station
+//                    mapViewModel.stationClicked = true
+//
                     val stationId = action.station.id.filter { it.isDigit() }
-                    val url = "https://www.tidesandcurrents.noaa.gov/stationhome.html?id=$stationId"
+                    val url =
+                        "https://www.tidesandcurrents.noaa.gov/noaatidepredictions.html?id=$stationId"
                     launchCustomTab(url)
                 }
+
             }
         }
     }
 
-    private fun setupObservers() {
-        viewModel.userLocation.observe(viewLifecycleOwner, Observer {
-            if (it != null) getAndObserveStations(it)
-        })
-    }
 
-    private fun getAndObserveStations(location: LatLng) {
-        viewModel.getStationsWithLocation(location)
+    private fun getAndObserveStations() {
+        viewModel.getPredictionStations()
             .observe(viewLifecycleOwner, Observer {
                 if (!it.data.isNullOrEmpty())
-                    listAdapter.updateData(ArrayList(it.data))
-                viewModel.stationLiveData.value = it.data
+                    viewModel.stationLiveData.value = it.data
+                val sordidStations =
+                    viewModel.sortStationsByDistance(viewModel.preferences.userLocation)
+                if (sordidStations != null) {
+                    listAdapter.updateData(sordidStations)
+                }
             })
     }
 
@@ -126,7 +129,7 @@ class StationFragment : BaseFragment() {
                     Toast.makeText(
                         requireContext(),
                         getString(R.string.no_location_explanation),
-                        Toast.LENGTH_SHORT
+                        Toast.LENGTH_LONG
                     ).show()
                 }
                 return

@@ -11,14 +11,15 @@ import com.google.android.material.tabs.TabLayout
 import com.jjswigut.eventide.R
 import com.jjswigut.eventide.databinding.FragmentViewpagerBinding
 import com.jjswigut.eventide.ui.search.StationViewModel
+import javax.inject.Singleton
 
-
+@Singleton
 class ViewPagerFragment : Fragment() {
-
-
+    private lateinit var viewPager: ViewPager
     private val viewModel: StationViewModel by activityViewModels()
     private var _binding: FragmentViewpagerBinding? = null
     private val binding get() = _binding!!
+
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
@@ -27,7 +28,7 @@ class ViewPagerFragment : Fragment() {
         _binding = FragmentViewpagerBinding.inflate(inflater, container, false)
         val view = binding.root
         val sectionsPagerAdapter = TabAdapter(requireContext(), childFragmentManager, totalTabs = 3)
-        val viewPager: ViewPager = binding.viewPager
+        viewPager = binding.viewPager
         viewPager.adapter = sectionsPagerAdapter
         val tabs: TabLayout = binding.tabs
         tabs.setupWithViewPager(viewPager)
@@ -36,7 +37,6 @@ class ViewPagerFragment : Fragment() {
         tabs.getTabAt(2)?.setIcon(com.jjswigut.eventide.R.drawable.ic_tides)
 
         return view
-
     }
 
     override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
@@ -62,4 +62,10 @@ class ViewPagerFragment : Fragment() {
         super.onDestroyView()
         _binding = null
     }
+
+    fun getFragment(item: Int) {
+        viewPager.setCurrentItem(item, true)
+    }
+
+
 }

@@ -3,7 +3,6 @@ package com.jjswigut.eventide.ui.map
 import android.Manifest
 import android.Manifest.permission.ACCESS_COARSE_LOCATION
 import android.content.pm.PackageManager
-import android.location.Location
 import android.net.Uri
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -22,7 +21,7 @@ import com.google.android.gms.maps.model.BitmapDescriptorFactory
 import com.google.android.gms.maps.model.LatLng
 import com.google.android.gms.maps.model.MarkerOptions
 import com.jjswigut.eventide.R
-import com.jjswigut.eventide.data.entities.TidalStation
+import com.jjswigut.eventide.data.entities.tidalpredictions.PredictionStation
 import com.jjswigut.eventide.ui.BaseFragment
 import dagger.hilt.android.AndroidEntryPoint
 
@@ -33,12 +32,11 @@ class MapsFragment : BaseFragment() {
     private val REQUEST_LOCATION_PERMISSION = 1
     private lateinit var map: GoogleMap
     private val viewModel: MapViewModel by activityViewModels()
-    private var stationList = arrayListOf<TidalStation>()
+    private var stationList = arrayListOf<PredictionStation>()
 
 
-    private val callback = OnMapReadyCallback { googleMap ->
+    private val mapStart = OnMapReadyCallback { googleMap ->
         map = googleMap
-        googleMap.clear()
         val zoom = 10f
         val location = viewModel.prefs.userLocation
         val youAreHere = googleMap.addMarker(
@@ -50,7 +48,7 @@ class MapsFragment : BaseFragment() {
         stationList.forEach { station ->
             googleMap.addMarker(
                 MarkerOptions()
-                    .position(LatLng(station.lat, station.lon))
+                    .position(LatLng(station.lat, station.lng))
                     .title(station.name)
             ).tag = station.id
 
@@ -58,17 +56,13 @@ class MapsFragment : BaseFragment() {
 
         googleMap.setOnInfoWindowClickListener { marker ->
             val stationId = marker.tag.toString().filter { it.isDigit() }
-            val url = "https://www.tidesandcurrents.noaa.gov/stationhome.html?id=$stationId"
+            val url = "https://tidesandcurrents.noaa.gov/noaatidepredictions.html?id=$stationId"
             launchCustomTab(url)
         }
 
         googleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(location, zoom))
         enableMyLocation()
 
-        googleMap.setOnMapClickListener {
-            createAndSaveNewLocation(it)
-            getAndObserveStations()
-        }
     }
 
     override fun onCreateView(
@@ -80,10 +74,16 @@ class MapsFragment : BaseFragment() {
         return inflater.inflate(R.layout.fragment_maps, container, false)
     }
 
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+        getAndObserveStations()
+    }
+
     override fun onResume() {
         super.onResume()
-        getAndObserveStations()
-
+        if (viewModel.stationClicked) {
+            viewModel.stationLatLng?.let { updateMapFromStationList(it) }
+        }
     }
 
     private fun getAndObserveStations() {
@@ -94,6 +94,7 @@ class MapsFragment : BaseFragment() {
                 updateMap()
             })
     }
+
 
     private fun isPermissionGranted(): Boolean {
         return ContextCompat.checkSelfPermission(
@@ -124,16 +125,25 @@ class MapsFragment : BaseFragment() {
         }
     }
 
-    private fun createAndSaveNewLocation(coordinates: LatLng) {
-        val location = Location("")
-        location.latitude = coordinates.latitude
-        location.longitude = coordinates.longitude
-        viewModel.prefs.saveLocation(location)
-    }
-
     private fun updateMap() {
         val mapFragment = childFragmentManager.findFragmentById(R.id.map) as SupportMapFragment?
-        mapFragment?.getMapAsync(callback)
+        mapFragment?.getMapAsync(mapStart)
+    }
+
+    private fun updateMapFromStationList(location: LatLng) {
+        val mapFragment = childFragmentManager.findFragmentById(R.id.map) as SupportMapFragment?
+        mapFragment?.getMapAsync(goToMapWithStation(location))
+    }
+
+    private fun goToMapWithStation(location: LatLng): OnMapReadyCallback {
+        return OnMapReadyCallback { googleMap ->
+            map = googleMap
+            val zoom = 10f
+            googleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(location, zoom))
+            enableMyLocation()
+
+
+        }
     }
 
     private fun launchCustomTab(url: String) {

@@ -7,7 +7,7 @@ import android.widget.TextView
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
 import com.google.android.gms.maps.model.LatLng
-import com.jjswigut.eventide.data.entities.TidalStation
+import com.jjswigut.eventide.data.entities.tidalpredictions.PredictionStation
 import com.jjswigut.eventide.databinding.ItemStationBinding
 import com.jjswigut.eventide.utils.ListDiffCallback
 import com.jjswigut.eventide.utils.Preferences
@@ -20,7 +20,7 @@ class StationListAdapter(
     RecyclerView.Adapter<StationListAdapter.ViewHolder>() {
 
 
-    private val elements: ArrayList<TidalStation> = arrayListOf()
+    private val elements: ArrayList<PredictionStation> = arrayListOf()
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
         return ViewHolder(
@@ -43,7 +43,7 @@ class StationListAdapter(
     override fun getItemCount(): Int = elements.size
 
 
-    fun updateData(newData: List<TidalStation>) {
+    fun updateData(newData: List<PredictionStation>) {
 
         val diffResult = DiffUtil.calculateDiff(
             ListDiffCallback(newList = newData, oldList = elements)
@@ -57,7 +57,7 @@ class StationListAdapter(
     inner class ViewHolder(
         private val binding: ItemStationBinding,
         private val actionHandler: StationActionHandler,
-        private val elements: List<TidalStation>,
+        private val elements: List<PredictionStation>,
         private val prefs: Preferences
     ) : RecyclerView.ViewHolder(binding.root) {
 
@@ -66,7 +66,7 @@ class StationListAdapter(
         private fun element() = elements[adapterPosition]
 
 
-        fun bind(item: TidalStation) {
+        fun bind(item: PredictionStation) {
             nameView.text = element().name
             if (prefs.userLocation != LatLng(0.0, 0.0)) {
                 distanceView.text = distance()
@@ -79,7 +79,7 @@ class StationListAdapter(
         private fun distance(): String {
             val stationLocation = Location("")
             stationLocation.latitude = element().lat
-            stationLocation.longitude = element().lon
+            stationLocation.longitude = element().lng
             val userLocation = Location("")
             userLocation.latitude = prefs.userLocation.latitude
             userLocation.longitude = prefs.userLocation.longitude

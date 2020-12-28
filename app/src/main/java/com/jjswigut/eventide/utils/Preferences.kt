@@ -28,9 +28,28 @@ class Preferences @Inject constructor(@ApplicationContext context: Context) {
         }
     }
 
+    fun saveNearestStationId(station: String) {
+        prefs.edit {
+            putString("stationId", station)
+            Log.d(TAG, "saveNearestStation: $station")
+        }
+    }
+
+    fun saveNearestStationName(station: String) {
+        prefs.edit {
+            putString("stationName", station)
+        }
+    }
+
+    val nearestStationName: String?
+        get() = prefs.getString("stationName", "")
+
+    val nearestStationId: String?
+        get() = prefs.getString("stationId", "")
+
     val userLocation: LatLng
         get() = LatLng(
-            prefs.getFloat("lat", 0.0F).toDouble(),
-            prefs.getFloat("lon", 0.0F).toDouble()
+            prefs.getFloat("lat", 41.3279F).toDouble(),
+            prefs.getFloat("lon", -71.9906F).toDouble()
         )
 }

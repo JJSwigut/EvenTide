@@ -84,9 +84,9 @@ class TidesListAdapter(private val viewModel: TideViewModel) :
 
 
         fun bind(item: UIModel.TideModel) {
-            highLowView.text = item.tideItem.type
-            timeView.text = timeFormatter(item.tideItem.date)
-            heightView.text = heightString(item.tideItem.height)
+            highLowView.text = highLowElaborator(item.tideItem.type)
+            timeView.text = timeFormatter(item.tideItem.t)
+            heightView.text = heightString(item.tideItem.v.toDouble())
 
         }
 
@@ -119,6 +119,13 @@ class TidesListAdapter(private val viewModel: TideViewModel) :
                 val heightInFeet = (height * 3.28084)
                 String.format("%.2f ft", heightInFeet)
             } else String.format("%.2f m", height)
+        }
+
+        private fun highLowElaborator(type: String): String {
+            if (type.contentEquals("L")) {
+                return "Low"
+            } else return "High"
+
         }
     }
 
