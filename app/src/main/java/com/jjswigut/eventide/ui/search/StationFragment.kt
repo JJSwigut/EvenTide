@@ -6,16 +6,13 @@ import android.annotation.SuppressLint
 import android.content.ContentValues.TAG
 import android.content.pm.PackageManager
 import android.location.Location
-import android.net.Uri
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
-import androidx.browser.customtabs.CustomTabsIntent
 import androidx.core.app.ActivityCompat
-import androidx.core.content.ContextCompat
 import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.Observer
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -24,7 +21,6 @@ import com.google.android.gms.maps.model.LatLng
 import com.jjswigut.eventide.R
 import com.jjswigut.eventide.databinding.FragmentStationBinding
 import com.jjswigut.eventide.ui.BaseFragment
-import com.jjswigut.eventide.ui.ViewPagerFragment
 import com.jjswigut.eventide.ui.map.MapViewModel
 import com.jjswigut.eventide.ui.search.StationAction.StationClicked
 import dagger.hilt.android.AndroidEntryPoint
@@ -79,24 +75,8 @@ class StationFragment : BaseFragment() {
 
 
     private fun handleAction(action: StationAction) {
-        when (action) {
-            is StationClicked -> {
-                view?.let {
-                    mapViewModel.station = action.station
-                    mapViewModel.stationClicked.value = true
-                    Log.d(TAG, "handleAction: $parentFragment ${requireParentFragment()}")
-                    requireParentFragment().view_pager.currentItem = 0
-                    val f: ViewPagerFragment = parentFragment as ViewPagerFragment
-
-//                    val stationId = action.station.id.filter { it.isDigit() }
-//                    val url =
-//                        "https://www.tidesandcurrents.noaa.gov/noaatidepredictions.html?id=$stationId"
-//                    launchCustomTab(url)
-                }
-
-
-            }
-        }
+        updateMapViewModelWithStationInfo(action)
+        navigateToTab(0)
     }
 
 
@@ -142,8 +122,22 @@ class StationFragment : BaseFragment() {
         }
     }
 
-    private fun navigateToFragment() {
-
+    private fun updateMapViewModelWithStationInfo(action: StationAction) {
+        when (action) {
+            is StationClicked -> {
+                mapViewModel.station = action.station
+                mapViewModel.stationClicked.value = true
+                mapViewModel.getTidesWithLocation(action.station.id)
+                    .observe(viewLifecycleOwner, Observer {
+                        if (!it.data.isNullOrEmpty())
+                            mapViewModel.tidesLiveData.value = it.data
+                    })
+                Log.d(
+                    TAG,
+                    "updateMapViewModelWithStationInfo: ${mapViewModel.tidesLiveData.value} "
+                )
+            }
+        }
     }
 
     private fun requestLocationPermission() {
@@ -209,18 +203,8 @@ class StationFragment : BaseFragment() {
         fusedLocationClient.removeLocationUpdates(locationCallback)
     }
 
-    private fun launchCustomTab(url: String) {
-        val builder = CustomTabsIntent.Builder()
-
-        builder.setToolbarColor(ContextCompat.getColor(requireContext(), R.color.primaryLightColor))
-        builder.setNavigationBarColor(
-            ContextCompat.getColor(
-                requireContext(),
-                R.color.primaryDarkColor
-            )
-        )
-        val customTabsIntent = builder.build()
-        customTabsIntent.launchUrl(requireContext(), Uri.parse(url))
+    private fun navigateToTab(tab: Int) {
+        requireParentFragment().view_pager.currentItem = tab
     }
 
     override fun onDestroyView() {

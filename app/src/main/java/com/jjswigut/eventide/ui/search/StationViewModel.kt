@@ -44,6 +44,8 @@ class StationViewModel @ViewModelInject constructor(
         return userLocation
             .distanceTo(stationLocation)
     }
+
+
 }
 
 

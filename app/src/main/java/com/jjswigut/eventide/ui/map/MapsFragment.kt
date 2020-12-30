@@ -13,6 +13,7 @@ import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.Observer
+import androidx.recyclerview.widget.GridLayoutManager
 import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.GoogleMap
 import com.google.android.gms.maps.OnMapReadyCallback
@@ -23,6 +24,7 @@ import com.google.android.gms.maps.model.Marker
 import com.google.android.gms.maps.model.MarkerOptions
 import com.jjswigut.eventide.R
 import com.jjswigut.eventide.data.entities.tidalpredictions.PredictionStation
+import com.jjswigut.eventide.databinding.FragmentMapsBinding
 import com.jjswigut.eventide.ui.BaseFragment
 import dagger.hilt.android.AndroidEntryPoint
 
@@ -32,9 +34,13 @@ class MapsFragment : BaseFragment() {
 
     private val REQUEST_LOCATION_PERMISSION = 1
     private lateinit var map: GoogleMap
+    private lateinit var listAdapter: MapCardAdapter
     private val viewModel: MapViewModel by activityViewModels()
     private var stationList = arrayListOf<PredictionStation>()
     private var markerList = arrayListOf<Marker>()
+
+    private var _binding: FragmentMapsBinding? = null
+    private val binding get() = _binding!!
 
 
     private val mapStart = OnMapReadyCallback { googleMap ->
@@ -63,17 +69,24 @@ class MapsFragment : BaseFragment() {
 
     }
 
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        listAdapter = MapCardAdapter(viewModel)
+    }
+
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
 
-        return inflater.inflate(R.layout.fragment_maps, container, false)
+        _binding = FragmentMapsBinding.inflate(inflater, container, false)
+        return binding.root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        setupRecyclerView()
         getAndObserveStations()
     }
 
@@ -129,6 +142,7 @@ class MapsFragment : BaseFragment() {
     private fun updateMapFromStationList(location: PredictionStation) {
         val mapFragment = childFragmentManager.findFragmentById(R.id.map) as SupportMapFragment?
         mapFragment?.getMapAsync(goToMapWithStation(location))
+        listAdapter.updateData(viewModel.sortTidesForMapCards(viewModel.tidesLiveData.value))
     }
 
     private fun goToMapWithStation(location: PredictionStation): OnMapReadyCallback {
@@ -159,8 +173,13 @@ class MapsFragment : BaseFragment() {
     }
 
     private fun observeStationClick() {
-        viewModel.stationClicked.observe(viewLifecycleOwner, Observer {
-            if (it) {
+        viewModel.stationClicked.observe(viewLifecycleOwner, Observer { stationClicked ->
+            if (stationClicked) {
+                viewModel.tidesLiveData.observe(viewLifecycleOwner, Observer {
+                    if (!it.isNullOrEmpty()) {
+                        listAdapter.updateData(viewModel.sortTidesForMapCards(it))
+                    }
+                })
                 viewModel.station?.let { station -> updateMapFromStationList(station) }
             } else updateMap()
         })
@@ -174,4 +193,16 @@ class MapsFragment : BaseFragment() {
         marker.tag = station.id
         return marker
     }
+
+    private fun setupRecyclerView() {
+        binding.mapRecyclerView.layoutManager =
+            GridLayoutManager(requireContext(), 1, GridLayoutManager.HORIZONTAL, false)
+        binding.mapRecyclerView.adapter = listAdapter
+    }
+
+    override fun onDestroyView() {
+        super.onDestroyView()
+        _binding = null
+    }
+
 }
