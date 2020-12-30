@@ -7,5 +7,6 @@
 /captures
 .externalNativeBuild
 .cxx
+.aab
 local.properties
 secure.properties

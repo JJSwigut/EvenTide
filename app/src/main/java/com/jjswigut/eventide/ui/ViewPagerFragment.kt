@@ -15,7 +15,7 @@ import javax.inject.Singleton
 
 @Singleton
 class ViewPagerFragment : Fragment() {
-    private lateinit var viewPager: ViewPager
+    lateinit var viewPager: ViewPager
     private val viewModel: StationViewModel by activityViewModels()
     private var _binding: FragmentViewpagerBinding? = null
     private val binding get() = _binding!!
@@ -27,14 +27,15 @@ class ViewPagerFragment : Fragment() {
     ): View? {
         _binding = FragmentViewpagerBinding.inflate(inflater, container, false)
         val view = binding.root
-        val sectionsPagerAdapter = TabAdapter(requireContext(), childFragmentManager, totalTabs = 3)
         viewPager = binding.viewPager
+        val sectionsPagerAdapter = TabAdapter(requireContext(), childFragmentManager, totalTabs = 3)
         viewPager.adapter = sectionsPagerAdapter
         val tabs: TabLayout = binding.tabs
         tabs.setupWithViewPager(viewPager)
         tabs.getTabAt(0)?.setIcon(com.jjswigut.eventide.R.drawable.ic_map)
         tabs.getTabAt(1)?.setIcon(com.jjswigut.eventide.R.drawable.ic_station)
         tabs.getTabAt(2)?.setIcon(com.jjswigut.eventide.R.drawable.ic_tides)
+
 
         return view
     }
@@ -63,8 +64,8 @@ class ViewPagerFragment : Fragment() {
         _binding = null
     }
 
-    fun getFragment(item: Int) {
-        viewPager.setCurrentItem(item, true)
+    fun setTab(tab: Int) {
+        binding.viewPager.currentItem = tab
     }
 
 

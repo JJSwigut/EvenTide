@@ -19,6 +19,7 @@ import com.google.android.gms.maps.OnMapReadyCallback
 import com.google.android.gms.maps.SupportMapFragment
 import com.google.android.gms.maps.model.BitmapDescriptorFactory
 import com.google.android.gms.maps.model.LatLng
+import com.google.android.gms.maps.model.Marker
 import com.google.android.gms.maps.model.MarkerOptions
 import com.jjswigut.eventide.R
 import com.jjswigut.eventide.data.entities.tidalpredictions.PredictionStation
@@ -33,6 +34,7 @@ class MapsFragment : BaseFragment() {
     private lateinit var map: GoogleMap
     private val viewModel: MapViewModel by activityViewModels()
     private var stationList = arrayListOf<PredictionStation>()
+    private var markerList = arrayListOf<Marker>()
 
 
     private val mapStart = OnMapReadyCallback { googleMap ->
@@ -46,12 +48,8 @@ class MapsFragment : BaseFragment() {
         youAreHere.showInfoWindow()
 
         stationList.forEach { station ->
-            googleMap.addMarker(
-                MarkerOptions()
-                    .position(LatLng(station.lat, station.lng))
-                    .title(station.name)
-            ).tag = station.id
-
+            makeMarker(map, station)
+            markerList.add(makeMarker(map, station))
         }
 
         googleMap.setOnInfoWindowClickListener { marker ->
@@ -60,7 +58,7 @@ class MapsFragment : BaseFragment() {
             launchCustomTab(url)
         }
 
-        googleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(location, zoom))
+        googleMap.animateCamera(CameraUpdateFactory.newLatLngZoom(location, zoom))
         enableMyLocation()
 
     }
@@ -81,9 +79,7 @@ class MapsFragment : BaseFragment() {
 
     override fun onResume() {
         super.onResume()
-        if (viewModel.stationClicked) {
-            viewModel.stationLatLng?.let { updateMapFromStationList(it) }
-        }
+        observeStationClick()
     }
 
     private fun getAndObserveStations() {
@@ -130,16 +126,19 @@ class MapsFragment : BaseFragment() {
         mapFragment?.getMapAsync(mapStart)
     }
 
-    private fun updateMapFromStationList(location: LatLng) {
+    private fun updateMapFromStationList(location: PredictionStation) {
         val mapFragment = childFragmentManager.findFragmentById(R.id.map) as SupportMapFragment?
         mapFragment?.getMapAsync(goToMapWithStation(location))
     }
 
-    private fun goToMapWithStation(location: LatLng): OnMapReadyCallback {
+    private fun goToMapWithStation(location: PredictionStation): OnMapReadyCallback {
         return OnMapReadyCallback { googleMap ->
             map = googleMap
             val zoom = 10f
-            googleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(location, zoom))
+            val latLng = LatLng(location.lat, location.lng)
+            markerList.forEach { if (it.tag == location.id) it.showInfoWindow() }
+
+            googleMap.animateCamera(CameraUpdateFactory.newLatLngZoom(latLng, zoom))
             enableMyLocation()
 
 
@@ -159,4 +158,20 @@ class MapsFragment : BaseFragment() {
         customTabsIntent.launchUrl(requireContext(), Uri.parse(url))
     }
 
+    private fun observeStationClick() {
+        viewModel.stationClicked.observe(viewLifecycleOwner, Observer {
+            if (it) {
+                viewModel.station?.let { station -> updateMapFromStationList(station) }
+            } else updateMap()
+        })
+    }
+
+    private fun makeMarker(map: GoogleMap, station: PredictionStation): Marker {
+        val marker = map.addMarker(
+            MarkerOptions().position(LatLng(station.lat, station.lng))
+                .title(station.name)
+        )
+        marker.tag = station.id
+        return marker
+    }
 }

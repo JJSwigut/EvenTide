@@ -24,9 +24,11 @@ import com.google.android.gms.maps.model.LatLng
 import com.jjswigut.eventide.R
 import com.jjswigut.eventide.databinding.FragmentStationBinding
 import com.jjswigut.eventide.ui.BaseFragment
+import com.jjswigut.eventide.ui.ViewPagerFragment
 import com.jjswigut.eventide.ui.map.MapViewModel
 import com.jjswigut.eventide.ui.search.StationAction.StationClicked
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.android.synthetic.main.fragment_viewpager.*
 
 @AndroidEntryPoint
 class StationFragment : BaseFragment() {
@@ -68,28 +70,30 @@ class StationFragment : BaseFragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         setupRecyclerView()
+        getAndObserveStations()
+
         Log.d(TAG, "onViewCreated: RecyclerView Set up")
     }
 
-    override fun onStart() {
-        super.onStart()
-        getAndObserveStations()
-    }
+
 
 
     private fun handleAction(action: StationAction) {
         when (action) {
             is StationClicked -> {
                 view?.let {
-//                    val station = LatLng(action.station.lat,action.station.lng)
-//                    mapViewModel.stationLatLng = station
-//                    mapViewModel.stationClicked = true
-//
-                    val stationId = action.station.id.filter { it.isDigit() }
-                    val url =
-                        "https://www.tidesandcurrents.noaa.gov/noaatidepredictions.html?id=$stationId"
-                    launchCustomTab(url)
+                    mapViewModel.station = action.station
+                    mapViewModel.stationClicked.value = true
+                    Log.d(TAG, "handleAction: $parentFragment ${requireParentFragment()}")
+                    requireParentFragment().view_pager.currentItem = 0
+                    val f: ViewPagerFragment = parentFragment as ViewPagerFragment
+
+//                    val stationId = action.station.id.filter { it.isDigit() }
+//                    val url =
+//                        "https://www.tidesandcurrents.noaa.gov/noaatidepredictions.html?id=$stationId"
+//                    launchCustomTab(url)
                 }
+
 
             }
         }
@@ -136,6 +140,10 @@ class StationFragment : BaseFragment() {
             }
 
         }
+    }
+
+    private fun navigateToFragment() {
+
     }
 
     private fun requestLocationPermission() {
