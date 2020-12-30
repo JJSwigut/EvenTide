@@ -13,8 +13,9 @@
     values-round/strings.xml for round devices.
     -->
     <string name="hello_world">Hello Square World!</string>
-    <string name="no_location_explanation">Unfortunately, this app won\'t be much use if we can\'t use you location!</string>
+    <string name="no_location_explanation">We\'ll start you off at our home port! If you choose to give location permission at a later date, the map will automatically update to where you are! </string>
     <string name="location_not_working">We\'ve tried everything we could to get a location! All we can ask is that you try again.</string>
+    <string name="nearest_station_header">Nearest Station:</string>
 
 
 </resources>

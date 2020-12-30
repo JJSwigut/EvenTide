@@ -11,9 +11,9 @@ class StationRepository @Inject constructor(
 ) {
 
 
-    fun getStations(lat: Double, lon: Double) = performGetOperation(
-        databaseQuery = { localDataSource.getStations() },
-        networkCall = { remoteDataSource.getStations(lat, lon) },
+    fun getPredictionStations() = performGetOperation(
+        databaseQuery = { localDataSource.getPredictionStations() },
+        networkCall = { remoteDataSource.getPredictionStations() },
         saveCallResult = {
             localDataSource.deleteStations()
             localDataSource.insertStations(it.stations)

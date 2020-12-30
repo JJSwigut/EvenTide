@@ -12,6 +12,7 @@ import androidx.preference.PreferenceManager
 import com.jjswigut.eventide.ui.ViewPagerFragmentDirections
 import dagger.hilt.android.AndroidEntryPoint
 
+
 @AndroidEntryPoint
 class MainActivity : AppCompatActivity() {
 
@@ -56,5 +57,6 @@ class MainActivity : AppCompatActivity() {
         Navigation.findNavController(this, R.id.nav_host_fragment)
             .navigate(destination)
     }
+
 
 }

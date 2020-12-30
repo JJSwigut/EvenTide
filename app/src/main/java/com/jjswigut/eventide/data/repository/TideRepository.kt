@@ -11,12 +11,12 @@ class TideRepository @Inject constructor(
 ) {
 
 
-    fun getTides(lat: Double, lon: Double) = performGetOperation(
+    fun getTides(station: String) = performGetOperation(
         databaseQuery = { localDataSource.getTides() },
-        networkCall = { remoteDataSource.getTides(lat, lon) },
+        networkCall = { remoteDataSource.getTides(station) },
         saveCallResult = {
             localDataSource.deleteTides()
-            localDataSource.insertTides(it.extremes)
+            localDataSource.insertTides(it.predictions)
         }
     )
 

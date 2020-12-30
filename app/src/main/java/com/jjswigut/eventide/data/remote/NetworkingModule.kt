@@ -18,7 +18,7 @@ object NetworkingModule {
     @Singleton
     @Provides
     fun provideRetrofit(gson: Gson): Retrofit = Retrofit.Builder()
-        .baseUrl("https://www.worldtides.info/api/")
+        .baseUrl("https://api.tidesandcurrents.noaa.gov/")
         .addConverterFactory(GsonConverterFactory.create(gson))
         .build()
 

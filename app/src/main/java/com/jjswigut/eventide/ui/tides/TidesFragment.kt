@@ -46,6 +46,8 @@ class TidesFragment : BaseFragment() {
 
     override fun onResume() {
         super.onResume()
+
+        getTides(viewModel.prefs.nearestStationId!!)
         observeAndSortTides()
         observeSortedTidesAndUpdate()
     }
@@ -53,16 +55,25 @@ class TidesFragment : BaseFragment() {
     private fun observeSortedTidesAndUpdate() {
         viewModel.sortedTidesLiveData.observe(viewLifecycleOwner, Observer { list ->
             if (!list.isNullOrEmpty()) {
+                binding.stationHeader.text = viewModel.prefs.nearestStationName
                 listAdapter.updateData(list)
             }
         })
     }
 
+    private fun getTides(station: String) {
+        viewModel.getTidesWithLocation(station)
+            .observe(viewLifecycleOwner, Observer {
+                if (!it.data.isNullOrEmpty())
+                    viewModel.tidesLiveData.value = it.data
+            })
+    }
+
     private fun observeAndSortTides() {
         viewModel.tidesLiveData
             .observe(viewLifecycleOwner, Observer {
-                if (!it.data.isNullOrEmpty()) {
-                    viewModel.sortedTidesLiveData.value = viewModel.sortTides(it.data)
+                if (!it.isNullOrEmpty()) {
+                    viewModel.sortedTidesLiveData.value = viewModel.sortTides(it)
                     Log.d(TAG, "getAndObserveTides: tides observed")
                 }
             })
