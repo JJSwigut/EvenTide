@@ -119,7 +119,7 @@ dependencies {
     implementation 'com.google.maps.android:android-maps-utils:2.0.3'
 
     implementation "androidx.browser:browser:1.3.0"
-    implementation 'com.github.j-roskopf:BottomNavBar:1.02'
+
 }
 repositories {
     mavenCentral()

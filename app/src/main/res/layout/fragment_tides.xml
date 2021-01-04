@@ -19,6 +19,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="@string/nearest_station_header"
+            android:textColor="@color/secondaryTextColor"
             android:textAlignment="center" />
 
         <TextView
@@ -27,6 +28,7 @@
             android:layout_height="wrap_content"
             android:background="@drawable/station_header_gradient"
             android:textAlignment="center"
+            android:textColor="@color/secondaryTextColor"
             android:textAppearance="@style/TextAppearance.MaterialComponents.Headline5"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"

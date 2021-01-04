@@ -58,25 +58,25 @@ class MapCardAdapter(private val viewModel: MapViewModel) :
 
         private val cardDate = binding.tideCardDate
 
-        private val tide1HighLow = binding.tideItem1.tideHighLow
-        private val tide1Time = binding.tideItem1.tideTime
-        private val tide1Height = binding.tideItem1.tideHeight
+        private val tide1HighLow = binding.tideItem1.mapTideHighLow
+        private val tide1Time = binding.tideItem1.mapTideTime
+        private val tide1Height = binding.tideItem1.mapTideHeight
 
-        private val tide2HighLow = binding.tideItem2.tideHighLow
-        private val tide2Time = binding.tideItem2.tideTime
-        private val tide2Height = binding.tideItem2.tideHeight
+        private val tide2HighLow = binding.tideItem2.mapTideHighLow
+        private val tide2Time = binding.tideItem2.mapTideTime
+        private val tide2Height = binding.tideItem2.mapTideHeight
 
-        private val tide3HighLow = binding.tideItem3.tideHighLow
-        private val tide3Time = binding.tideItem3.tideTime
-        private val tide3Height = binding.tideItem3.tideHeight
+        private val tide3HighLow = binding.tideItem3.mapTideHighLow
+        private val tide3Time = binding.tideItem3.mapTideTime
+        private val tide3Height = binding.tideItem3.mapTideHeight
 
-        private val tide4HighLow = binding.tideItem4.tideHighLow
-        private val tide4Time = binding.tideItem4.tideTime
-        private val tide4Height = binding.tideItem4.tideHeight
+        private val tide4HighLow = binding.tideItem4.mapTideHighLow
+        private val tide4Time = binding.tideItem4.mapTideTime
+        private val tide4Height = binding.tideItem4.mapTideHeight
 
-        private val tide5HighLow = binding.tideItem5.tideHighLow
-        private val tide5Time = binding.tideItem5.tideTime
-        private val tide5Height = binding.tideItem5.tideHeight
+        private val tide5HighLow = binding.tideItem5.mapTideHighLow
+        private val tide5Time = binding.tideItem5.mapTideTime
+        private val tide5Height = binding.tideItem5.mapTideHeight
 
 
         fun bind(item: TideCard) {
@@ -86,13 +86,17 @@ class MapCardAdapter(private val viewModel: MapViewModel) :
             tide1Time.text = timeFormatter(item.list[0].t)
             tide1Height.text = heightString(item.list[0].v.toDouble())
 
-            tide2HighLow.text = highLowElaborator(item.list[1].type)
-            tide2Time.text = timeFormatter(item.list[1].t)
-            tide2Height.text = heightString(item.list[1].v.toDouble())
+            if (item.list.size > 1) {
+                tide2HighLow.text = highLowElaborator(item.list[1].type)
+                tide2Time.text = timeFormatter(item.list[1].t)
+                tide2Height.text = heightString(item.list[1].v.toDouble())
+            }
 
-            tide3HighLow.text = highLowElaborator(item.list[2].type)
-            tide3Time.text = timeFormatter(item.list[2].t)
-            tide3Height.text = heightString(item.list[2].v.toDouble())
+            if (item.list.size > 2) {
+                tide3HighLow.text = highLowElaborator(item.list[2].type)
+                tide3Time.text = timeFormatter(item.list[2].t)
+                tide3Height.text = heightString(item.list[2].v.toDouble())
+            }
 
             if (item.list.size > 3) {
                 tide4HighLow.text = highLowElaborator(item.list[3].type)
