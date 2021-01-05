@@ -22,6 +22,7 @@ import com.google.android.gms.maps.OnMapReadyCallback
 import com.google.android.gms.maps.SupportMapFragment
 import com.google.android.gms.maps.model.BitmapDescriptorFactory
 import com.google.android.gms.maps.model.LatLng
+import com.google.android.gms.maps.model.Marker
 import com.google.android.gms.maps.model.MarkerOptions
 import com.google.maps.android.clustering.ClusterManager
 import com.google.maps.android.clustering.view.DefaultClusterRenderer
@@ -121,15 +122,17 @@ class MapsFragment : BaseFragment() {
             return@setOnClusterClickListener true
         }
         clusterManager.setOnClusterItemClickListener {
-            getTidesFromMarkerClick(it)
+            getTidesFromMarkerClick(it.id)
             observeTides()
             return@setOnClusterItemClickListener false
         }
 
         clusterManager.setOnClusterItemInfoWindowClickListener {
-            val url = "https://tidesandcurrents.noaa.gov/noaatidepredictions.html?id=${it.getId()}"
+            val url = "https://tidesandcurrents.noaa.gov/noaatidepredictions.html?id=${it.id}"
             launchCustomTab(url)
         }
+
+
 
         map.setOnCameraIdleListener(clusterManager)
         map.setOnMarkerClickListener(clusterManager)
@@ -143,10 +146,12 @@ class MapsFragment : BaseFragment() {
                     marker.name,
                     marker.id
                 )
+
             )
         }
 
         Log.d(TAG, "addClusters: ${clusterManager.markerCollection.markers.size}")
+
 
         clusterManager.setAnimation(true)
 
@@ -191,11 +196,21 @@ class MapsFragment : BaseFragment() {
     private fun fromStationList(location: PredictionStation): OnMapReadyCallback {
         return OnMapReadyCallback { googleMap ->
             map = googleMap
+            map.clear()
             val zoom = 12f
             val latLng = LatLng(location.lat, location.lng)
-
+            addClusters(map)
             googleMap.animateCamera(CameraUpdateFactory.newLatLngZoom(latLng, zoom))
             enableMyLocation()
+            clusterManager.algorithm.items.forEach {
+                if (it.id == viewModel.station?.id) {
+                    val marker = addMarker(it)
+                    marker.showInfoWindow()
+                    map.setOnCameraMoveStartedListener {
+                        marker.remove()
+                    }
+                }
+            }
         }
     }
 
@@ -220,6 +235,7 @@ class MapsFragment : BaseFragment() {
                     updateMap(fromStationList(station))
                 }
                 updateRecyclerView()
+
             }
         })
     }
@@ -232,8 +248,8 @@ class MapsFragment : BaseFragment() {
         })
     }
 
-    private fun getTidesFromMarkerClick(marker: TideStationMarker) {
-        marker.getId().let { id ->
+    private fun getTidesFromMarkerClick(stationId: String) {
+        stationId.let { id ->
             viewModel.getTidesWithLocation(id)
                 .observe(viewLifecycleOwner, Observer {
                     if (!it.data.isNullOrEmpty()) {
@@ -241,6 +257,21 @@ class MapsFragment : BaseFragment() {
                     }
                 })
         }
+    }
+
+    private fun addMarker(clusterItem: TideStationMarker?): Marker {
+        val marker = map.addMarker(
+            MarkerOptions().position(clusterItem!!.position)
+                .title(clusterItem.title).snippet(clusterItem.snippet)
+        )
+        marker.tag = clusterItem.id
+        map.setOnMarkerClickListener {
+            getTidesFromMarkerClick(marker.tag.toString())
+            observeTides()
+            return@setOnMarkerClickListener false
+        }
+
+        return marker
     }
 
     private fun setupRecyclerView() {
@@ -253,6 +284,5 @@ class MapsFragment : BaseFragment() {
         super.onDestroyView()
         _binding = null
     }
-
 
 }

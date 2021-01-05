@@ -10,7 +10,7 @@ import androidx.viewpager.widget.ViewPager
 import com.google.android.material.tabs.TabLayout
 import com.jjswigut.eventide.R
 import com.jjswigut.eventide.databinding.FragmentViewpagerBinding
-import com.jjswigut.eventide.ui.search.StationViewModel
+import com.jjswigut.eventide.ui.stations.StationViewModel
 import javax.inject.Singleton
 
 @Singleton

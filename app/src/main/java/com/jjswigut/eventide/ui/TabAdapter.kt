@@ -5,7 +5,7 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentManager
 import androidx.fragment.app.FragmentPagerAdapter
 import com.jjswigut.eventide.ui.map.MapsFragment
-import com.jjswigut.eventide.ui.search.StationFragment
+import com.jjswigut.eventide.ui.stations.StationFragment
 import com.jjswigut.eventide.ui.tides.TidesFragment
 
 @Suppress("DEPRECATION")

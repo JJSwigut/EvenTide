@@ -1,4 +1,4 @@
-package com.jjswigut.eventide.ui.search
+package com.jjswigut.eventide.ui.stations
 
 import android.location.Location
 import android.view.LayoutInflater

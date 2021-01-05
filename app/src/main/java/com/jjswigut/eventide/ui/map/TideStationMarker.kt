@@ -3,12 +3,12 @@ package com.jjswigut.eventide.ui.map
 import com.google.android.gms.maps.model.LatLng
 import com.google.maps.android.clustering.ClusterItem
 
-class TideStationMarker(
-    lat: Double,
-    lng: Double,
+data class TideStationMarker(
+    val lat: Double,
+    val lng: Double,
     private val snippet: String?,
     private val title: String?,
-    private val id: String
+    val id: String
 ) : ClusterItem {
 
     private val position: LatLng = LatLng(lat, lng)
@@ -27,8 +27,5 @@ class TideStationMarker(
         return position
     }
 
-    fun getId(): String {
-        return id
-    }
 
 }

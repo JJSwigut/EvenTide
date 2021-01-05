@@ -1,4 +1,4 @@
-package com.jjswigut.eventide.ui.search
+package com.jjswigut.eventide.ui.stations
 
 
 import android.Manifest
@@ -22,7 +22,7 @@ import com.jjswigut.eventide.R
 import com.jjswigut.eventide.databinding.FragmentStationBinding
 import com.jjswigut.eventide.ui.BaseFragment
 import com.jjswigut.eventide.ui.map.MapViewModel
-import com.jjswigut.eventide.ui.search.StationAction.StationClicked
+import com.jjswigut.eventide.ui.stations.StationAction.StationClicked
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.android.synthetic.main.fragment_viewpager.*
 
