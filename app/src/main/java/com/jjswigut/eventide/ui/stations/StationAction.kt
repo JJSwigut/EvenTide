@@ -1,4 +1,4 @@
-package com.jjswigut.eventide.ui.search
+package com.jjswigut.eventide.ui.stations
 
 
 import com.jjswigut.eventide.data.entities.tidalpredictions.PredictionStation

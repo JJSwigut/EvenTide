@@ -2,9 +2,11 @@ package com.jjswigut.eventide.ui.map
 
 import android.Manifest
 import android.Manifest.permission.ACCESS_COARSE_LOCATION
+import android.content.ContentValues.TAG
 import android.content.pm.PackageManager
 import android.net.Uri
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -13,6 +15,7 @@ import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.Observer
+import androidx.recyclerview.widget.GridLayoutManager
 import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.GoogleMap
 import com.google.android.gms.maps.OnMapReadyCallback
@@ -21,8 +24,11 @@ import com.google.android.gms.maps.model.BitmapDescriptorFactory
 import com.google.android.gms.maps.model.LatLng
 import com.google.android.gms.maps.model.Marker
 import com.google.android.gms.maps.model.MarkerOptions
+import com.google.maps.android.clustering.ClusterManager
+import com.google.maps.android.clustering.view.DefaultClusterRenderer
 import com.jjswigut.eventide.R
 import com.jjswigut.eventide.data.entities.tidalpredictions.PredictionStation
+import com.jjswigut.eventide.databinding.FragmentMapsBinding
 import com.jjswigut.eventide.ui.BaseFragment
 import dagger.hilt.android.AndroidEntryPoint
 
@@ -32,14 +38,26 @@ class MapsFragment : BaseFragment() {
 
     private val REQUEST_LOCATION_PERMISSION = 1
     private lateinit var map: GoogleMap
+
+    private lateinit var listAdapter: MapCardAdapter
+
     private val viewModel: MapViewModel by activityViewModels()
+
     private var stationList = arrayListOf<PredictionStation>()
-    private var markerList = arrayListOf<Marker>()
+
+    private var _binding: FragmentMapsBinding? = null
+    private val binding get() = _binding!!
+
+    private lateinit var clusterManager: ClusterManager<TideStationMarker>
+
+    private lateinit var renderer: DefaultClusterRenderer<TideStationMarker>
 
 
     private val mapStart = OnMapReadyCallback { googleMap ->
+
         map = googleMap
-        val zoom = 10f
+        map.clear()
+        val zoom = 3f
         val location = viewModel.prefs.userLocation
         val youAreHere = googleMap.addMarker(
             MarkerOptions().position(location).title("You are here!")
@@ -47,20 +65,18 @@ class MapsFragment : BaseFragment() {
         )
         youAreHere.showInfoWindow()
 
-        stationList.forEach { station ->
-            makeMarker(map, station)
-            markerList.add(makeMarker(map, station))
-        }
+        addClusters(map)
 
-        googleMap.setOnInfoWindowClickListener { marker ->
-            val stationId = marker.tag.toString().filter { it.isDigit() }
-            val url = "https://tidesandcurrents.noaa.gov/noaatidepredictions.html?id=$stationId"
-            launchCustomTab(url)
-        }
+        googleMap.uiSettings.isMapToolbarEnabled = false
 
         googleMap.animateCamera(CameraUpdateFactory.newLatLngZoom(location, zoom))
         enableMyLocation()
 
+    }
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        listAdapter = MapCardAdapter(viewModel)
     }
 
     override fun onCreateView(
@@ -69,11 +85,17 @@ class MapsFragment : BaseFragment() {
         savedInstanceState: Bundle?
     ): View? {
 
-        return inflater.inflate(R.layout.fragment_maps, container, false)
+        _binding = FragmentMapsBinding.inflate(inflater, container, false)
+        return binding.root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        binding.recyclerExit.setOnClickListener {
+            binding.mapRecyclerView.visibility = View.GONE
+            binding.recyclerExit.visibility = View.GONE
+        }
+        setupRecyclerView()
         getAndObserveStations()
     }
 
@@ -87,8 +109,52 @@ class MapsFragment : BaseFragment() {
             .observe(viewLifecycleOwner, Observer {
                 if (!it.data.isNullOrEmpty())
                     stationList = viewModel.buildStationList(it.data)
-                updateMap()
+                updateMap(mapStart)
             })
+    }
+
+    private fun addClusters(map: GoogleMap) {
+        clusterManager = ClusterManager(requireContext(), map)
+        renderer = DefaultClusterRenderer(requireContext(), map, clusterManager)
+        clusterManager.setOnClusterClickListener {
+            val zoom = map.cameraPosition.zoom + 2f
+            map.animateCamera(CameraUpdateFactory.newLatLngZoom(it.position, zoom))
+            return@setOnClusterClickListener true
+        }
+        clusterManager.setOnClusterItemClickListener {
+            getTidesFromMarkerClick(it.id)
+            observeTides()
+            return@setOnClusterItemClickListener false
+        }
+
+        clusterManager.setOnClusterItemInfoWindowClickListener {
+            val url = "https://tidesandcurrents.noaa.gov/noaatidepredictions.html?id=${it.id}"
+            launchCustomTab(url)
+        }
+
+
+
+        map.setOnCameraIdleListener(clusterManager)
+        map.setOnMarkerClickListener(clusterManager)
+
+        stationList.forEach { marker ->
+            clusterManager.addItem(
+                TideStationMarker(
+                    marker.lat,
+                    marker.lng,
+                    marker.state,
+                    marker.name,
+                    marker.id
+                )
+
+            )
+        }
+
+        Log.d(TAG, "addClusters: ${clusterManager.markerCollection.markers.size}")
+
+
+        clusterManager.setAnimation(true)
+
     }
 
 
@@ -112,36 +178,39 @@ class MapsFragment : BaseFragment() {
                 return
             }
             map.isMyLocationEnabled = true
-        } else {
-            ActivityCompat.requestPermissions(
-                requireActivity(),
-                arrayOf(Manifest.permission.ACCESS_FINE_LOCATION, ACCESS_COARSE_LOCATION),
-                REQUEST_LOCATION_PERMISSION
-            )
         }
     }
 
-    private fun updateMap() {
+    private fun updateMap(callback: OnMapReadyCallback) {
         val mapFragment = childFragmentManager.findFragmentById(R.id.map) as SupportMapFragment?
-        mapFragment?.getMapAsync(mapStart)
+        mapFragment?.getMapAsync(callback)
     }
 
-    private fun updateMapFromStationList(location: PredictionStation) {
-        val mapFragment = childFragmentManager.findFragmentById(R.id.map) as SupportMapFragment?
-        mapFragment?.getMapAsync(goToMapWithStation(location))
+
+    private fun updateRecyclerView() {
+        listAdapter.updateData(viewModel.sortTidesForMapCards(viewModel.tidesLiveData.value))
+        binding.mapRecyclerView.visibility = View.VISIBLE
+        binding.recyclerExit.visibility = View.VISIBLE
     }
 
-    private fun goToMapWithStation(location: PredictionStation): OnMapReadyCallback {
+    private fun fromStationList(location: PredictionStation): OnMapReadyCallback {
         return OnMapReadyCallback { googleMap ->
             map = googleMap
-            val zoom = 10f
+            map.clear()
+            val zoom = 12f
             val latLng = LatLng(location.lat, location.lng)
-            markerList.forEach { if (it.tag == location.id) it.showInfoWindow() }
-
+            addClusters(map)
             googleMap.animateCamera(CameraUpdateFactory.newLatLngZoom(latLng, zoom))
             enableMyLocation()
-
-
+            clusterManager.algorithm.items.forEach {
+                if (it.id == viewModel.station?.id) {
+                    val marker = addMarker(it)
+                    marker.showInfoWindow()
+                    map.setOnCameraMoveStartedListener {
+                        marker.remove()
+                    }
+                }
+            }
         }
     }
 
@@ -159,19 +228,61 @@ class MapsFragment : BaseFragment() {
     }
 
     private fun observeStationClick() {
-        viewModel.stationClicked.observe(viewLifecycleOwner, Observer {
-            if (it) {
-                viewModel.station?.let { station -> updateMapFromStationList(station) }
-            } else updateMap()
+        viewModel.stationClicked.observe(viewLifecycleOwner, Observer { stationClicked ->
+            if (stationClicked) {
+                observeTides()
+                viewModel.station?.let { station ->
+                    updateMap(fromStationList(station))
+                }
+                updateRecyclerView()
+
+            }
         })
     }
 
-    private fun makeMarker(map: GoogleMap, station: PredictionStation): Marker {
+    private fun observeTides() {
+        viewModel.tidesLiveData.observe(viewLifecycleOwner, Observer {
+            if (!it.isNullOrEmpty()) {
+                updateRecyclerView()
+            }
+        })
+    }
+
+    private fun getTidesFromMarkerClick(stationId: String) {
+        stationId.let { id ->
+            viewModel.getTidesWithLocation(id)
+                .observe(viewLifecycleOwner, Observer {
+                    if (!it.data.isNullOrEmpty()) {
+                        viewModel.tidesLiveData.value = it.data
+                    }
+                })
+        }
+    }
+
+    private fun addMarker(clusterItem: TideStationMarker?): Marker {
         val marker = map.addMarker(
-            MarkerOptions().position(LatLng(station.lat, station.lng))
-                .title(station.name)
+            MarkerOptions().position(clusterItem!!.position)
+                .title(clusterItem.title).snippet(clusterItem.snippet)
         )
-        marker.tag = station.id
+        marker.tag = clusterItem.id
+        map.setOnMarkerClickListener {
+            getTidesFromMarkerClick(marker.tag.toString())
+            observeTides()
+            return@setOnMarkerClickListener false
+        }
+
         return marker
     }
+
+    private fun setupRecyclerView() {
+        binding.mapRecyclerView.layoutManager =
+            GridLayoutManager(requireContext(), 1, GridLayoutManager.HORIZONTAL, false)
+        binding.mapRecyclerView.adapter = listAdapter
+    }
+
+    override fun onDestroyView() {
+        super.onDestroyView()
+        _binding = null
+    }
+
 }

@@ -1,4 +1,4 @@
-package com.jjswigut.eventide.ui.search
+package com.jjswigut.eventide.ui.stations
 
 import android.location.Location
 import androidx.hilt.lifecycle.ViewModelInject
@@ -44,6 +44,8 @@ class StationViewModel @ViewModelInject constructor(
         return userLocation
             .distanceTo(stationLocation)
     }
+
+
 }
 
 

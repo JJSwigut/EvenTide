@@ -46,7 +46,6 @@ class TidesFragment : BaseFragment() {
 
     override fun onResume() {
         super.onResume()
-
         getTides(viewModel.prefs.nearestStationId!!)
         observeAndSortTides()
         observeSortedTidesAndUpdate()
