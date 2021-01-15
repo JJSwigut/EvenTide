@@ -8,7 +8,6 @@ import com.jjswigut.eventide.data.repository.StationRepository
 import com.jjswigut.eventide.utils.Preferences
 import io.mockk.mockk
 import junit.framework.Assert.assertTrue
-import org.junit.After
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
@@ -31,12 +30,8 @@ class StationViewModelTest {
         stationViewModel = StationViewModel(repo, prefs)
     }
 
-    @After
-    fun tearDown() {
-    }
 
     @Test
-
     fun `when given user location we get a list of stations sorted by distance`() {
 
         val list = arrayListOf<PredictionStation>()
