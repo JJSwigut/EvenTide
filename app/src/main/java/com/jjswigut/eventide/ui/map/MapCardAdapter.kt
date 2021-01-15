@@ -81,32 +81,32 @@ class MapCardAdapter(private val viewModel: MapViewModel) :
 
         fun bind(item: TideCard) {
             cardDate.text = dayFormatter(item.date)
-            when {
-                item.list.size > 0 -> {
-                    tide1HighLow.text = highLowElaborator(item.list[0].type)
-                    tide1Time.text = timeFormatter(item.list[0].t)
-                    tide1Height.text = heightString(item.list[0].v.toDouble())
-                }
-                item.list.size > 1 -> {
-                    tide2HighLow.text = highLowElaborator(item.list[1].type)
-                    tide2Time.text = timeFormatter(item.list[1].t)
-                    tide2Height.text = heightString(item.list[1].v.toDouble())
-                }
-                item.list.size > 2 -> {
-                    tide3HighLow.text = highLowElaborator(item.list[2].type)
-                    tide3Time.text = timeFormatter(item.list[2].t)
-                    tide3Height.text = heightString(item.list[2].v.toDouble())
-                }
-                item.list.size > 3 -> {
-                    tide4HighLow.text = highLowElaborator(item.list[3].type)
-                    tide4Time.text = timeFormatter(item.list[3].t)
-                    tide4Height.text = heightString(item.list[3].v.toDouble())
-                }
-                item.list.size > 4 -> {
-                    tide5HighLow.text = highLowElaborator(item.list[4].type)
-                    tide5Time.text = timeFormatter(item.list[4].t)
-                    tide5Height.text = heightString(item.list[4].v.toDouble())
-                }
+
+            tide1HighLow.text = highLowElaborator(item.list[0].type)
+            tide1Time.text = timeFormatter(item.list[0].t)
+            tide1Height.text = heightString(item.list[0].v.toDouble())
+
+            if (item.list.size > 1) {
+                tide2HighLow.text = highLowElaborator(item.list[1].type)
+                tide2Time.text = timeFormatter(item.list[1].t)
+                tide2Height.text = heightString(item.list[1].v.toDouble())
+            }
+
+            if (item.list.size > 2) {
+                tide3HighLow.text = highLowElaborator(item.list[2].type)
+                tide3Time.text = timeFormatter(item.list[2].t)
+                tide3Height.text = heightString(item.list[2].v.toDouble())
+            }
+
+            if (item.list.size > 3) {
+                tide4HighLow.text = highLowElaborator(item.list[3].type)
+                tide4Time.text = timeFormatter(item.list[3].t)
+                tide4Height.text = heightString(item.list[3].v.toDouble())
+            }
+            if (item.list.size > 4) {
+                tide5HighLow.text = highLowElaborator(item.list[4].type)
+                tide5Time.text = timeFormatter(item.list[4].t)
+                tide5Height.text = heightString(item.list[4].v.toDouble())
             }
         }
 
@@ -142,9 +142,9 @@ class MapCardAdapter(private val viewModel: MapViewModel) :
         }
 
         private fun highLowElaborator(type: String): String {
-            if (type.contentEquals("L")) {
-                return "Low"
-            } else return "High"
+            return if (type.contentEquals("L")) {
+                "Low"
+            } else "High"
 
         }
 

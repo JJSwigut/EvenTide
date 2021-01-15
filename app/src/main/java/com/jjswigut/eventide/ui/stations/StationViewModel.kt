@@ -26,12 +26,12 @@ class StationViewModel @ViewModelInject constructor(
     }
 
     fun sortStationsByDistance(user: LatLng): List<PredictionStation>? {
-        val sortedStations = stationLiveData.value?.sortedBy { distance(it, user) }
-        sortedStations?.let {
-            preferences.saveNearestStationId(sortedStations.first().id)
-            preferences.saveNearestStationName(sortedStations.first().name)
-        }
-        return sortedStations
+        return stationLiveData.value?.sortedBy { distance(it, user) }
+    }
+
+    fun saveNearestStation(stations: List<PredictionStation>) {
+        preferences.saveNearestStationId(stations.first().id)
+        preferences.saveNearestStationName(stations.first().name)
     }
 
     private fun distance(station: PredictionStation, user: LatLng): Float {

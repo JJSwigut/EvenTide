@@ -22,7 +22,6 @@ class MapViewModel @ViewModelInject constructor(
 
     val stationClicked = MutableLiveData<Boolean>()
     var station: PredictionStation? = null
-    var stationMarker: TideStationMarker = TideStationMarker(2.0, 2.0, "", "", "")
     val stationLiveData
         get() = stationRepo.getPredictionStations()
 

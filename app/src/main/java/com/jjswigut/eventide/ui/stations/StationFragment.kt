@@ -87,6 +87,7 @@ class StationFragment : BaseFragment() {
                     viewModel.stationLiveData.value = it.data
                 val sordidStations =
                     viewModel.sortStationsByDistance(viewModel.preferences.userLocation)
+                sordidStations?.let { viewModel.saveNearestStation(sordidStations) }
                 if (sordidStations != null) {
                     listAdapter.updateData(sordidStations)
                 }
