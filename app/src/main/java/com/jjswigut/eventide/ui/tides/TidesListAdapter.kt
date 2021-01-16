@@ -11,8 +11,9 @@ import com.jjswigut.eventide.databinding.DayHeaderBinding
 import com.jjswigut.eventide.databinding.ItemTideBinding
 import com.jjswigut.eventide.utils.ListDiffCallback
 import com.jjswigut.eventide.utils.Preferences
-import java.time.LocalDate
-import java.time.format.DateTimeFormatter
+import java.text.SimpleDateFormat
+import java.util.*
+import kotlin.collections.ArrayList
 
 
 class TidesListAdapter(private val viewModel: TideViewModel) :
@@ -141,11 +142,12 @@ class TidesListAdapter(private val viewModel: TideViewModel) :
         }
 
         private fun dayFormatter(date: String): String {
-
-            val parsedDate = LocalDate.parse(date, DateTimeFormatter.ISO_LOCAL_DATE)
-            return parsedDate.format(DateTimeFormatter.ofPattern("EEEE, MMM dd, yyyy"))
+            val parser = SimpleDateFormat("yyyy-MM-dd", Locale.US)
+            val formatter = SimpleDateFormat("EEEE, MMM dd, yyyy", Locale.US)
+            val parsedDate = parser.parse(date)
+            return formatter.format(parsedDate!!)
         }
-
+//2021-01-16 10:06
     }
 
 
