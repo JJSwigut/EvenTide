@@ -5,6 +5,6 @@ data class PredictionStationList(
     val stations: List<PredictionStation>
 )
 
-//val count: Int,
-//val self: Any,
-//val units: Any
+// val count: Int,
+// val self: Any,
+// val units: Any

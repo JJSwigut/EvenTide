@@ -28,6 +28,4 @@ interface Dao {
 
     @Query("DELETE FROM tide_prediction_table")
     suspend fun deleteTides()
-
-
 }

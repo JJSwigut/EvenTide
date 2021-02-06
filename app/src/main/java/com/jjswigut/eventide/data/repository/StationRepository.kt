@@ -10,7 +10,6 @@ class StationRepository @Inject constructor(
     private val localDataSource: Dao
 ) {
 
-
     fun getPredictionStations() = performGetOperation(
         databaseQuery = { localDataSource.getPredictionStations() },
         networkCall = { remoteDataSource.getPredictionStations() },
@@ -19,6 +18,4 @@ class StationRepository @Inject constructor(
             localDataSource.insertStations(it.stations)
         }
     )
-
-
 }

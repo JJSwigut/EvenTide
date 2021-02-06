@@ -11,7 +11,6 @@ import com.jjswigut.eventide.data.repository.StationRepository
 import com.jjswigut.eventide.utils.Preferences
 import com.jjswigut.eventide.utils.Resource
 
-
 class StationViewModel @ViewModelInject constructor(
     private val repo: StationRepository,
     prefs: Preferences
@@ -44,11 +43,4 @@ class StationViewModel @ViewModelInject constructor(
         return userLocation
             .distanceTo(stationLocation)
     }
-
-
 }
-
-
-
-
-

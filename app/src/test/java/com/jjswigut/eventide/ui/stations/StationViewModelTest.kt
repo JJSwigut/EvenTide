@@ -8,11 +8,9 @@ import com.jjswigut.eventide.data.repository.StationRepository
 import com.jjswigut.eventide.utils.Preferences
 import io.mockk.mockk
 import junit.framework.Assert.assertTrue
-import org.junit.After
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
-
 
 class StationViewModelTest {
 
@@ -25,18 +23,12 @@ class StationViewModelTest {
     private val repo = mockk<StationRepository>()
     private val prefs = mockk<Preferences>()
 
-
     @Before
     fun setUp() {
         stationViewModel = StationViewModel(repo, prefs)
     }
 
-    @After
-    fun tearDown() {
-    }
-
     @Test
-
     fun `when given user location we get a list of stations sorted by distance`() {
 
         val list = arrayListOf<PredictionStation>()
@@ -59,7 +51,6 @@ class StationViewModelTest {
         list.forEach {
             assertTrue(distance(list[0], user) <= distance(it, user))
         }
-
     }
 
     private fun distance(station: PredictionStation, user: LatLng): Float {

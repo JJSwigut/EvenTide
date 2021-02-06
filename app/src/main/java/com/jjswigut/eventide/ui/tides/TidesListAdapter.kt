@@ -11,9 +11,9 @@ import com.jjswigut.eventide.databinding.DayHeaderBinding
 import com.jjswigut.eventide.databinding.ItemTideBinding
 import com.jjswigut.eventide.utils.ListDiffCallback
 import com.jjswigut.eventide.utils.Preferences
-import java.time.LocalDate
-import java.time.format.DateTimeFormatter
-
+import java.text.SimpleDateFormat
+import java.util.*
+import kotlin.collections.ArrayList
 
 class TidesListAdapter(private val viewModel: TideViewModel) :
     RecyclerView.Adapter<RecyclerView.ViewHolder>() {
@@ -30,7 +30,6 @@ class TidesListAdapter(private val viewModel: TideViewModel) :
         diffResult.dispatchUpdatesTo(this)
     }
 
-
     override fun getItemCount(): Int = elements.size
 
     override fun getItemViewType(position: Int) =
@@ -38,7 +37,6 @@ class TidesListAdapter(private val viewModel: TideViewModel) :
             is UIModel.DayModel -> R.layout.day_header
             is UIModel.TideModel -> R.layout.item_tide
         }
-
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
 
@@ -77,17 +75,14 @@ class TidesListAdapter(private val viewModel: TideViewModel) :
         private val prefs: Preferences
     ) : RecyclerView.ViewHolder(binding.root) {
 
-
         private val highLowView: TextView = binding.tideHighLow
         private val timeView: TextView = binding.tideTime
         private val heightView: TextView = binding.tideHeight
-
 
         fun bind(item: UIModel.TideModel) {
             highLowView.text = highLowElaborator(item.tideItem.type)
             timeView.text = timeFormatter(item.tideItem.t)
             heightView.text = heightString(item.tideItem.v.toDouble())
-
         }
 
         private fun timeFormatter(date: String): String {
@@ -122,13 +117,11 @@ class TidesListAdapter(private val viewModel: TideViewModel) :
         }
 
         private fun highLowElaborator(type: String): String {
-            if (type.contentEquals("L")) {
-                return "Low"
-            } else return "High"
-
+            return if (type.contentEquals("L")) {
+                "Low"
+            } else "High"
         }
     }
-
 
     inner class DayViewHolder(
         binding: DayHeaderBinding
@@ -141,15 +134,11 @@ class TidesListAdapter(private val viewModel: TideViewModel) :
         }
 
         private fun dayFormatter(date: String): String {
-
-            val parsedDate = LocalDate.parse(date, DateTimeFormatter.ISO_LOCAL_DATE)
-            return parsedDate.format(DateTimeFormatter.ofPattern("EEEE, MMM dd, yyyy"))
+            val parser = SimpleDateFormat("yyyy-MM-dd", Locale.US)
+            val formatter = SimpleDateFormat("EEEE, MMM dd, yyyy", Locale.US)
+            val parsedDate = parser.parse(date)
+            return formatter.format(parsedDate!!)
         }
-
+// 2021-01-16 10:06
     }
-
-
 }
-
-
-

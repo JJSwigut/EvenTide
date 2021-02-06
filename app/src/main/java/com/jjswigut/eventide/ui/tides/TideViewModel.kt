@@ -11,12 +11,10 @@ import com.jjswigut.eventide.data.repository.TideRepository
 import com.jjswigut.eventide.utils.Preferences
 import com.jjswigut.eventide.utils.Resource
 
-
 class TideViewModel @ViewModelInject constructor(
     private val repo: TideRepository,
     val prefs: Preferences
 ) : ViewModel() {
-
 
     val tidesLiveData = MutableLiveData<List<Prediction>>()
     var sortedTidesLiveData = MutableLiveData<ArrayList<UIModel>>()
@@ -34,11 +32,5 @@ class TideViewModel @ViewModelInject constructor(
 
     fun getTidesWithLocation(station: String): LiveData<Resource<List<Prediction>>> {
         return repo.getTides(station)
-
     }
 }
-
-
-
-
-

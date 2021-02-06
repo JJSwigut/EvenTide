@@ -5,7 +5,7 @@ import androidx.room.Entity
 import androidx.room.PrimaryKey
 
 @Entity(tableName = "prediction_station_table")
-class PredictionStation(
+data class PredictionStation(
 
     @PrimaryKey
     val id: String,

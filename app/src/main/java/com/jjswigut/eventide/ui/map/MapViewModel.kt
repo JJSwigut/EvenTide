@@ -12,7 +12,6 @@ import com.jjswigut.eventide.data.repository.TideRepository
 import com.jjswigut.eventide.utils.Preferences
 import com.jjswigut.eventide.utils.Resource
 
-
 class MapViewModel @ViewModelInject constructor(
     private val stationRepo: StationRepository,
     private val tideRepo: TideRepository,
@@ -27,7 +26,6 @@ class MapViewModel @ViewModelInject constructor(
 
     val tidesLiveData = MutableLiveData<List<Prediction>>()
 
-
     fun buildStationList(list: List<PredictionStation>): ArrayList<PredictionStation> {
         val stationList = arrayListOf<PredictionStation>()
         list.forEach { station -> stationList.add(station) }
@@ -36,7 +34,6 @@ class MapViewModel @ViewModelInject constructor(
 
     fun getTidesWithLocation(station: String): LiveData<Resource<List<Prediction>>> {
         return tideRepo.getTides(station)
-
     }
 
     fun sortTidesForMapCards(list: List<Prediction>?): ArrayList<TideCard> {
@@ -46,10 +43,4 @@ class MapViewModel @ViewModelInject constructor(
         }
         return cardModels
     }
-
 }
-
-
-
-
-

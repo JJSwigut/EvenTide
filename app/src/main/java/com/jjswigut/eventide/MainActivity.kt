@@ -12,7 +12,6 @@ import androidx.preference.PreferenceManager
 import com.jjswigut.eventide.ui.ViewPagerFragmentDirections
 import dagger.hilt.android.AndroidEntryPoint
 
-
 @AndroidEntryPoint
 class MainActivity : AppCompatActivity() {
 
@@ -24,7 +23,6 @@ class MainActivity : AppCompatActivity() {
         NavigationUI.setupActionBarWithNavController(this, navController)
 
         PreferenceManager.setDefaultValues(this, R.xml.root_preferences, false)
-
     }
 
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
@@ -32,7 +30,6 @@ class MainActivity : AppCompatActivity() {
         inflater.inflate(R.menu.options_menu, menu)
         return true
     }
-
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         return when (item.itemId) {
@@ -43,7 +40,6 @@ class MainActivity : AppCompatActivity() {
             }
             else -> super.onOptionsItemSelected(item)
         }
-
     }
 
     override fun onSupportNavigateUp(): Boolean {
@@ -57,6 +53,4 @@ class MainActivity : AppCompatActivity() {
         Navigation.findNavController(this, R.id.nav_host_fragment)
             .navigate(destination)
     }
-
-
 }

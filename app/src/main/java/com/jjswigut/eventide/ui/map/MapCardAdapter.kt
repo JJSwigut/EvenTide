@@ -8,9 +8,9 @@ import com.jjswigut.eventide.data.entities.TideCard
 import com.jjswigut.eventide.databinding.MapTideCardBinding
 import com.jjswigut.eventide.utils.ListDiffCallback
 import com.jjswigut.eventide.utils.Preferences
-import java.time.LocalDate
-import java.time.format.DateTimeFormatter
-
+import java.text.SimpleDateFormat
+import java.util.*
+import kotlin.collections.ArrayList
 
 class MapCardAdapter(private val viewModel: MapViewModel) :
     RecyclerView.Adapter<MapCardAdapter.TideCardViewHolder>() {
@@ -27,9 +27,7 @@ class MapCardAdapter(private val viewModel: MapViewModel) :
         diffResult.dispatchUpdatesTo(this)
     }
 
-
     override fun getItemCount(): Int = elements.size
-
 
     override fun onCreateViewHolder(
         parent: ViewGroup,
@@ -55,7 +53,6 @@ class MapCardAdapter(private val viewModel: MapViewModel) :
         private val prefs: Preferences
     ) : RecyclerView.ViewHolder(binding.root) {
 
-
         private val cardDate = binding.tideCardDate
 
         private val tide1HighLow = binding.tideItem1.mapTideHighLow
@@ -77,7 +74,6 @@ class MapCardAdapter(private val viewModel: MapViewModel) :
         private val tide5HighLow = binding.tideItem5.mapTideHighLow
         private val tide5Time = binding.tideItem5.mapTideTime
         private val tide5Height = binding.tideItem5.mapTideHeight
-
 
         fun bind(item: TideCard) {
             cardDate.text = dayFormatter(item.date)
@@ -145,18 +141,13 @@ class MapCardAdapter(private val viewModel: MapViewModel) :
             return if (type.contentEquals("L")) {
                 "Low"
             } else "High"
-
         }
 
         private fun dayFormatter(date: String): String {
-
-            val parsedDate = LocalDate.parse(date, DateTimeFormatter.ISO_LOCAL_DATE)
-            return parsedDate.format(DateTimeFormatter.ofPattern("EEEE, MMM dd, yyyy"))
+            val parser = SimpleDateFormat("yyyy-MM-dd", Locale.US)
+            val formatter = SimpleDateFormat("EEEE, MMM dd, yyyy", Locale.US)
+            val parsedDate = parser.parse(date)
+            return formatter.format(parsedDate!!)
         }
     }
-
-
 }
-
-
-

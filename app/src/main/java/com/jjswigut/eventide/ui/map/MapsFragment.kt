@@ -1,3 +1,5 @@
+@file:Suppress("PrivatePropertyName", "unused")
+
 package com.jjswigut.eventide.ui.map
 
 import android.Manifest
@@ -14,7 +16,6 @@ import androidx.browser.customtabs.CustomTabsIntent
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.activityViewModels
-import androidx.lifecycle.Observer
 import androidx.recyclerview.widget.GridLayoutManager
 import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.GoogleMap
@@ -32,11 +33,9 @@ import com.jjswigut.eventide.databinding.FragmentMapsBinding
 import com.jjswigut.eventide.ui.BaseFragment
 import dagger.hilt.android.AndroidEntryPoint
 
-
 @AndroidEntryPoint
 class MapsFragment : BaseFragment() {
 
-    private val REQUEST_LOCATION_PERMISSION = 1
     private lateinit var map: GoogleMap
 
     private lateinit var listAdapter: MapCardAdapter
@@ -51,7 +50,6 @@ class MapsFragment : BaseFragment() {
     private lateinit var clusterManager: ClusterManager<TideStationMarker>
 
     private lateinit var renderer: DefaultClusterRenderer<TideStationMarker>
-
 
     private val mapStart = OnMapReadyCallback { googleMap ->
 
@@ -71,7 +69,6 @@ class MapsFragment : BaseFragment() {
 
         googleMap.animateCamera(CameraUpdateFactory.newLatLngZoom(location, zoom))
         enableMyLocation()
-
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -83,7 +80,7 @@ class MapsFragment : BaseFragment() {
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View? {
+    ): View {
 
         _binding = FragmentMapsBinding.inflate(inflater, container, false)
         return binding.root
@@ -106,7 +103,7 @@ class MapsFragment : BaseFragment() {
 
     private fun getAndObserveStations() {
         viewModel.stationLiveData
-            .observe(viewLifecycleOwner, Observer {
+            .observe(viewLifecycleOwner, {
                 if (!it.data.isNullOrEmpty())
                     stationList = viewModel.buildStationList(it.data)
                 updateMap(mapStart)
@@ -132,8 +129,6 @@ class MapsFragment : BaseFragment() {
             launchCustomTab(url)
         }
 
-
-
         map.setOnCameraIdleListener(clusterManager)
         map.setOnMarkerClickListener(clusterManager)
 
@@ -152,11 +147,8 @@ class MapsFragment : BaseFragment() {
 
         Log.d(TAG, "addClusters: ${clusterManager.markerCollection.markers.size}")
 
-
         clusterManager.setAnimation(true)
-
     }
-
 
     private fun isPermissionGranted(): Boolean {
         return ContextCompat.checkSelfPermission(
@@ -185,7 +177,6 @@ class MapsFragment : BaseFragment() {
         val mapFragment = childFragmentManager.findFragmentById(R.id.map) as SupportMapFragment?
         mapFragment?.getMapAsync(callback)
     }
-
 
     private fun updateRecyclerView() {
         listAdapter.updateData(viewModel.sortTidesForMapCards(viewModel.tidesLiveData.value))
@@ -228,20 +219,19 @@ class MapsFragment : BaseFragment() {
     }
 
     private fun observeStationClick() {
-        viewModel.stationClicked.observe(viewLifecycleOwner, Observer { stationClicked ->
+        viewModel.stationClicked.observe(viewLifecycleOwner, { stationClicked ->
             if (stationClicked) {
                 observeTides()
                 viewModel.station?.let { station ->
                     updateMap(fromStationList(station))
                 }
                 updateRecyclerView()
-
             }
         })
     }
 
     private fun observeTides() {
-        viewModel.tidesLiveData.observe(viewLifecycleOwner, Observer {
+        viewModel.tidesLiveData.observe(viewLifecycleOwner, {
             if (!it.isNullOrEmpty()) {
                 updateRecyclerView()
             }
@@ -251,7 +241,7 @@ class MapsFragment : BaseFragment() {
     private fun getTidesFromMarkerClick(stationId: String) {
         stationId.let { id ->
             viewModel.getTidesWithLocation(id)
-                .observe(viewLifecycleOwner, Observer {
+                .observe(viewLifecycleOwner, {
                     if (!it.data.isNullOrEmpty()) {
                         viewModel.tidesLiveData.value = it.data
                     }
@@ -284,5 +274,4 @@ class MapsFragment : BaseFragment() {
         super.onDestroyView()
         _binding = null
     }
-
 }

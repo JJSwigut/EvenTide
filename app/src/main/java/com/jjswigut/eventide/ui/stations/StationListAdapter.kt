@@ -12,13 +12,11 @@ import com.jjswigut.eventide.databinding.ItemStationBinding
 import com.jjswigut.eventide.utils.ListDiffCallback
 import com.jjswigut.eventide.utils.Preferences
 
-
 class StationListAdapter(
     private val actionHandler: StationActionHandler,
     private val prefs: Preferences
 ) :
     RecyclerView.Adapter<StationListAdapter.ViewHolder>() {
-
 
     private val elements: ArrayList<PredictionStation> = arrayListOf()
 
@@ -42,7 +40,6 @@ class StationListAdapter(
 
     override fun getItemCount(): Int = elements.size
 
-
     fun updateData(newData: List<PredictionStation>) {
 
         val diffResult = DiffUtil.calculateDiff(
@@ -52,7 +49,6 @@ class StationListAdapter(
         elements.addAll(newData)
         diffResult.dispatchUpdatesTo(this)
     }
-
 
     inner class ViewHolder(
         private val binding: ItemStationBinding,
@@ -64,7 +60,6 @@ class StationListAdapter(
         private val nameView: TextView = binding.stationNameView
         private val distanceView: TextView = binding.stationDistanceView
         private fun element() = elements[adapterPosition]
-
 
         fun bind(item: PredictionStation) {
             nameView.text = element().name
