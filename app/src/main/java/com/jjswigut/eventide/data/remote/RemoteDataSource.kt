@@ -3,7 +3,8 @@ package com.jjswigut.eventide.data.remote
 import com.jjswigut.eventide.data.entities.tidalpredictions.PredictionStationList
 import com.jjswigut.eventide.utils.Resource
 import java.text.SimpleDateFormat
-import java.util.*
+import java.util.Locale
+import java.util.Calendar
 import javax.inject.Inject
 
 class RemoteDataSource @Inject constructor(

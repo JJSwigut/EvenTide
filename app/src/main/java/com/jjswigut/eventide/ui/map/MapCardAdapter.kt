@@ -9,7 +9,7 @@ import com.jjswigut.eventide.databinding.MapTideCardBinding
 import com.jjswigut.eventide.utils.ListDiffCallback
 import com.jjswigut.eventide.utils.Preferences
 import java.text.SimpleDateFormat
-import java.util.*
+import java.util.Locale
 import kotlin.collections.ArrayList
 
 class MapCardAdapter(private val viewModel: MapViewModel) :
@@ -111,7 +111,6 @@ class MapCardAdapter(private val viewModel: MapViewModel) :
             val time = fullDate.takeLast(5)
             var hour = time.take(2).toInt()
             var timeStamp: String
-            val timeString: String
 
             timeStamp = if (hour >= 12) {
                 " pm"
@@ -123,7 +122,7 @@ class MapCardAdapter(private val viewModel: MapViewModel) :
                 hour = 12
                 timeStamp = " am"
             }
-            timeString = if (hour < 10) {
+            val timeString: String = if (hour < 10) {
                 hour.toString().takeLast(1) + time.takeLast(3)
             } else hour.toString().takeLast(2) + time.takeLast(3)
 
