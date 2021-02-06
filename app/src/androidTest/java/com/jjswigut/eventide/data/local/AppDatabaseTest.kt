@@ -68,8 +68,5 @@ class AppDatabaseTest {
             dao.getPredictionStations().getOrAwaitValue()
 
         assertThat(databaseStations).containsExactlyElementsIn(listOfStations)
-
     }
-
 }
-

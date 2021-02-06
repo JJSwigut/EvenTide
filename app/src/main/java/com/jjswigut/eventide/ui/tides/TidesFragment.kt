@@ -1,6 +1,5 @@
 package com.jjswigut.eventide.ui.tides
 
-
 import android.content.ContentValues.TAG
 import android.os.Bundle
 import android.util.Log
@@ -8,7 +7,6 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.activityViewModels
-import androidx.lifecycle.Observer
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.jjswigut.eventide.databinding.FragmentTidesBinding
 import com.jjswigut.eventide.ui.BaseFragment
@@ -21,14 +19,11 @@ class TidesFragment : BaseFragment() {
     private val binding get() = _binding!!
     private lateinit var listAdapter: TidesListAdapter
 
-
     private val viewModel: TideViewModel by activityViewModels()
-
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         listAdapter = TidesListAdapter(viewModel)
-
     }
 
     override fun onCreateView(
@@ -41,7 +36,6 @@ class TidesFragment : BaseFragment() {
         val view = binding.root
         setupRecyclerView()
         return view
-
     }
 
     override fun onResume() {
@@ -52,7 +46,7 @@ class TidesFragment : BaseFragment() {
     }
 
     private fun observeSortedTidesAndUpdate() {
-        viewModel.sortedTidesLiveData.observe(viewLifecycleOwner, Observer { list ->
+        viewModel.sortedTidesLiveData.observe(viewLifecycleOwner, { list ->
             if (!list.isNullOrEmpty()) {
                 binding.stationHeader.text = viewModel.prefs.nearestStationName
                 listAdapter.updateData(list)
@@ -62,7 +56,7 @@ class TidesFragment : BaseFragment() {
 
     private fun getTides(station: String) {
         viewModel.getTidesWithLocation(station)
-            .observe(viewLifecycleOwner, Observer {
+            .observe(viewLifecycleOwner, {
                 if (!it.data.isNullOrEmpty())
                     viewModel.tidesLiveData.value = it.data
             })
@@ -70,7 +64,7 @@ class TidesFragment : BaseFragment() {
 
     private fun observeAndSortTides() {
         viewModel.tidesLiveData
-            .observe(viewLifecycleOwner, Observer {
+            .observe(viewLifecycleOwner, {
                 if (!it.isNullOrEmpty()) {
                     viewModel.sortedTidesLiveData.value = viewModel.sortTides(it)
                     Log.d(TAG, "getAndObserveTides: tides observed")
@@ -86,7 +80,5 @@ class TidesFragment : BaseFragment() {
     override fun onDestroyView() {
         super.onDestroyView()
         _binding = null
-
     }
-
 }

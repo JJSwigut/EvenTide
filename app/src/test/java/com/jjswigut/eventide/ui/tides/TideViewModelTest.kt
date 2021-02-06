@@ -48,12 +48,9 @@ class TideViewModelTest {
         val dayHeader3 = modelList[10] as UIModel.DayModel
         val dayHeader4 = modelList[15] as UIModel.DayModel
 
-
         assertEquals(dayHeader1.dayHeader.day, "2021-01-00")
         assertEquals(dayHeader2.dayHeader.day, "2021-01-01")
         assertEquals(dayHeader3.dayHeader.day, "2021-01-02")
         assertEquals(dayHeader4.dayHeader.day, "2021-01-03")
-
-
     }
 }

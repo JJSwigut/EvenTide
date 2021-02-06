@@ -7,15 +7,15 @@ import androidx.room.PrimaryKey
 @Entity(tableName = "prediction_station_table")
 data class PredictionStation(
 
-   @PrimaryKey
-   val id: String,
-   @ColumnInfo
-   val state: String,
-   @ColumnInfo
-   val lat: Double,
-   @ColumnInfo
-   val lng: Double,
-   @ColumnInfo
-   val name: String
+    @PrimaryKey
+    val id: String,
+    @ColumnInfo
+    val state: String,
+    @ColumnInfo
+    val lat: Double,
+    @ColumnInfo
+    val lng: Double,
+    @ColumnInfo
+    val name: String
 
 )

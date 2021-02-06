@@ -44,6 +44,4 @@ object RepositoryModule {
         localDataSource: Dao
     ) =
         StationRepository(remoteDataSource, localDataSource)
-
-
 }

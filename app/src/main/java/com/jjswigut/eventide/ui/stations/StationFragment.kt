@@ -1,6 +1,5 @@
 package com.jjswigut.eventide.ui.stations
 
-
 import android.Manifest
 import android.annotation.SuppressLint
 import android.content.ContentValues.TAG
@@ -14,9 +13,12 @@ import android.view.ViewGroup
 import android.widget.Toast
 import androidx.core.app.ActivityCompat
 import androidx.fragment.app.activityViewModels
-import androidx.lifecycle.Observer
 import androidx.recyclerview.widget.LinearLayoutManager
-import com.google.android.gms.location.*
+import com.google.android.gms.location.FusedLocationProviderClient
+import com.google.android.gms.location.LocationCallback
+import com.google.android.gms.location.LocationRequest
+import com.google.android.gms.location.LocationResult
+import com.google.android.gms.location.LocationServices
 import com.google.android.gms.maps.model.LatLng
 import com.jjswigut.eventide.R
 import com.jjswigut.eventide.databinding.FragmentStationBinding
@@ -24,7 +26,7 @@ import com.jjswigut.eventide.ui.BaseFragment
 import com.jjswigut.eventide.ui.map.MapViewModel
 import com.jjswigut.eventide.ui.stations.StationAction.StationClicked
 import dagger.hilt.android.AndroidEntryPoint
-import kotlinx.android.synthetic.main.fragment_viewpager.*
+import kotlinx.android.synthetic.main.fragment_viewpager.view_pager
 
 @AndroidEntryPoint
 class StationFragment : BaseFragment() {
@@ -39,9 +41,7 @@ class StationFragment : BaseFragment() {
     private val viewModel: StationViewModel by activityViewModels()
     private val mapViewModel: MapViewModel by activityViewModels()
 
-
     private lateinit var fusedLocationClient: FusedLocationProviderClient
-
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -51,7 +51,6 @@ class StationFragment : BaseFragment() {
             ::handleAction,
             viewModel.preferences
         )
-
     }
 
     override fun onCreateView(
@@ -71,18 +70,14 @@ class StationFragment : BaseFragment() {
         Log.d(TAG, "onViewCreated: RecyclerView Set up")
     }
 
-
-
-
     private fun handleAction(action: StationAction) {
         updateMapViewModelWithStationInfo(action)
-        navigateToTab(0)
+        0.navigateToTab()
     }
-
 
     private fun getAndObserveStations() {
         viewModel.getPredictionStations()
-            .observe(viewLifecycleOwner, Observer {
+            .observe(viewLifecycleOwner, {
                 if (!it.data.isNullOrEmpty())
                     viewModel.stationLiveData.value = it.data
                 val sordidStations =
@@ -93,7 +88,6 @@ class StationFragment : BaseFragment() {
                 }
             })
     }
-
 
     private fun setupRecyclerView() {
         binding.recyclerView.layoutManager = LinearLayoutManager(requireContext())
@@ -119,7 +113,6 @@ class StationFragment : BaseFragment() {
                 }
                 return
             }
-
         }
     }
 
@@ -129,7 +122,7 @@ class StationFragment : BaseFragment() {
                 mapViewModel.station = action.station
                 mapViewModel.stationClicked.value = true
                 mapViewModel.getTidesWithLocation(action.station.id)
-                    .observe(viewLifecycleOwner, Observer {
+                    .observe(viewLifecycleOwner, {
                         if (!it.data.isNullOrEmpty())
                             mapViewModel.tidesLiveData.value = it.data
                     })
@@ -165,7 +158,6 @@ class StationFragment : BaseFragment() {
         return true
     }
 
-
     @SuppressLint("MissingPermission")
     private fun getLastLocation() {
         if (getLocationPermission()) {
@@ -193,7 +185,6 @@ class StationFragment : BaseFragment() {
                         viewModel.preferences.saveLocation(it)
                         viewModel.userLocation.value = LatLng(it.latitude, it.longitude)
                     }
-
                 } else Toast.makeText(
                     requireContext(),
                     getString(R.string.location_not_working),
@@ -204,8 +195,8 @@ class StationFragment : BaseFragment() {
         fusedLocationClient.removeLocationUpdates(locationCallback)
     }
 
-    private fun navigateToTab(tab: Int) {
-        requireParentFragment().view_pager.currentItem = tab
+    private fun Int.navigateToTab() {
+        requireParentFragment().view_pager.currentItem = this
     }
 
     override fun onDestroyView() {

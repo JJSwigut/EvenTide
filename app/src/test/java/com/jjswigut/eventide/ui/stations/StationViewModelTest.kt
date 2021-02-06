@@ -12,7 +12,6 @@ import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
 
-
 class StationViewModelTest {
 
     @Rule
@@ -24,12 +23,10 @@ class StationViewModelTest {
     private val repo = mockk<StationRepository>()
     private val prefs = mockk<Preferences>()
 
-
     @Before
     fun setUp() {
         stationViewModel = StationViewModel(repo, prefs)
     }
-
 
     @Test
     fun `when given user location we get a list of stations sorted by distance`() {
@@ -54,7 +51,6 @@ class StationViewModelTest {
         list.forEach {
             assertTrue(distance(list[0], user) <= distance(it, user))
         }
-
     }
 
     private fun distance(station: PredictionStation, user: LatLng): Float {

@@ -14,7 +14,6 @@ import javax.inject.Singleton
 @InstallIn(ApplicationComponent::class)
 object NetworkingModule {
 
-
     @Singleton
     @Provides
     fun provideRetrofit(gson: Gson): Retrofit = Retrofit.Builder()
@@ -27,6 +26,4 @@ object NetworkingModule {
 
     @Provides
     fun provideService(retrofit: Retrofit): Service = retrofit.create(Service::class.java)
-
-
 }

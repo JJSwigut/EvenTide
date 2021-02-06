@@ -10,7 +10,6 @@ class TideRepository @Inject constructor(
     private val localDataSource: Dao
 ) {
 
-
     fun getTides(station: String) = performGetOperation(
         databaseQuery = { localDataSource.getTides() },
         networkCall = { remoteDataSource.getTides(station) },
@@ -19,5 +18,4 @@ class TideRepository @Inject constructor(
             localDataSource.insertTides(it.predictions)
         }
     )
-
 }

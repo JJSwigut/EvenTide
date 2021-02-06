@@ -13,7 +13,6 @@ data class TideStationMarker(
 
     private val position: LatLng = LatLng(lat, lng)
 
-
     override fun getSnippet(): String? {
         return snippet
     }
@@ -22,10 +21,7 @@ data class TideStationMarker(
         return title
     }
 
-
     override fun getPosition(): LatLng {
         return position
     }
-
-
 }

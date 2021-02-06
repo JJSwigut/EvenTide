@@ -9,7 +9,6 @@ import org.junit.Assert.assertTrue
 import org.junit.Before
 import org.junit.Test
 
-
 class MapViewModelTest {
 
     private lateinit var mapViewModel: MapViewModel
@@ -23,7 +22,7 @@ class MapViewModelTest {
         mapViewModel = MapViewModel(stationRepo, tideRepository, prefs)
     }
 
-    //Takes a list of Tide Predictions, groups them by day, and creates objects that include the
+    // Takes a list of Tide Predictions, groups them by day, and creates objects that include the
     // date as well as all the tidal Predictions associated with that date.
     @Test
     fun `when sortTides is called the list is expected to be grouped correctly`() {

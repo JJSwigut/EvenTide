@@ -9,9 +9,5 @@ class SplashActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         startActivity(Intent(this, MainActivity::class.java))
         finish()
-
-
     }
-
-
 }

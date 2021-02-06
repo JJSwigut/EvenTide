@@ -17,10 +17,8 @@ class RemoteDataSource @Inject constructor(
     private val startDate = formatter.format(systemTime)
     private val endDate = formatter.format(endSystemTime)
 
-
     suspend fun getPredictionStations(): Resource<PredictionStationList> {
         return getResult { service.getPredictionStations() }
-
     }
 
     suspend fun getTides(station: String) =

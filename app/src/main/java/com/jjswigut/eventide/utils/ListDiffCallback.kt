@@ -2,7 +2,6 @@ package com.jjswigut.eventide.utils
 
 import androidx.recyclerview.widget.DiffUtil
 
-
 class ListDiffCallback(
     private val oldList: List<Any>,
     private val newList: List<Any>
@@ -19,5 +18,4 @@ class ListDiffCallback(
     override fun areContentsTheSame(oldPosition: Int, newPosition: Int): Boolean {
         return oldList[oldPosition] == newList[newPosition]
     }
-
 }

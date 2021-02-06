@@ -15,7 +15,6 @@ import java.text.SimpleDateFormat
 import java.util.*
 import kotlin.collections.ArrayList
 
-
 class TidesListAdapter(private val viewModel: TideViewModel) :
     RecyclerView.Adapter<RecyclerView.ViewHolder>() {
 
@@ -31,7 +30,6 @@ class TidesListAdapter(private val viewModel: TideViewModel) :
         diffResult.dispatchUpdatesTo(this)
     }
 
-
     override fun getItemCount(): Int = elements.size
 
     override fun getItemViewType(position: Int) =
@@ -39,7 +37,6 @@ class TidesListAdapter(private val viewModel: TideViewModel) :
             is UIModel.DayModel -> R.layout.day_header
             is UIModel.TideModel -> R.layout.item_tide
         }
-
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
 
@@ -78,17 +75,14 @@ class TidesListAdapter(private val viewModel: TideViewModel) :
         private val prefs: Preferences
     ) : RecyclerView.ViewHolder(binding.root) {
 
-
         private val highLowView: TextView = binding.tideHighLow
         private val timeView: TextView = binding.tideTime
         private val heightView: TextView = binding.tideHeight
-
 
         fun bind(item: UIModel.TideModel) {
             highLowView.text = highLowElaborator(item.tideItem.type)
             timeView.text = timeFormatter(item.tideItem.t)
             heightView.text = heightString(item.tideItem.v.toDouble())
-
         }
 
         private fun timeFormatter(date: String): String {
@@ -123,13 +117,11 @@ class TidesListAdapter(private val viewModel: TideViewModel) :
         }
 
         private fun highLowElaborator(type: String): String {
-            if (type.contentEquals("L")) {
-                return "Low"
-            } else return "High"
-
+            return if (type.contentEquals("L")) {
+                "Low"
+            } else "High"
         }
     }
-
 
     inner class DayViewHolder(
         binding: DayHeaderBinding
@@ -147,11 +139,6 @@ class TidesListAdapter(private val viewModel: TideViewModel) :
             val parsedDate = parser.parse(date)
             return formatter.format(parsedDate!!)
         }
-//2021-01-16 10:06
+// 2021-01-16 10:06
     }
-
-
 }
-
-
-
