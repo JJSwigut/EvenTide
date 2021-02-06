@@ -17,9 +17,7 @@
   the user as possible. For users that would like to dig deeper into the
   forecasts and sensory data collected by tide-stations, the app aims to
   provide an expedient and obvious route to such information. EvenTide
-  fetches information from the
-  [WorldTides API](https://www.worldtides.info/apidocs) and then relies
-  on [NOAA](https://tidesandcurrents.noaa.gov/) for realtime and
+  fetches information from [NOAA](https://tidesandcurrents.noaa.gov/) for realtime and
   forcasted tidal data based on station location.
 
 # Tech
